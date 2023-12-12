@@ -25,7 +25,8 @@ public partial class GeneratorGrid : GodotObject
         South,
         SouthWest,
         West,
-        NorthWest
+        NorthWest,
+        Here
     };
 
     public GeneratorGrid(Vector2I size)
@@ -74,6 +75,8 @@ public partial class GeneratorGrid : GodotObject
             case Direction.NorthWest:
                 newPosition.Y += 1;
                 newPosition.X -= 1;
+                break;
+            case Direction.Here:
                 break;
             default:
                 throw new ArgumentException(nameof(direction));
@@ -127,6 +130,17 @@ public partial class GeneratorGrid : GodotObject
 
         return results;
     }
+    
+    /// <summary>
+    /// Checks if a given position is safe within the defined Size.
+    /// </summary>
+    /// <param name="position">The position to check.</param>
+    /// <returns>True if the position is safe, False otherwise.</returns>
+    public bool IsPositionSafe(Vector2I position)
+    {
+        return (position.X >= 0 && position.X < Size.X &&
+                position.Y >= 0 && position.Y <= Size.Y);
+    }
 
     private void InitializeGrid()
     {
@@ -152,16 +166,7 @@ public partial class GeneratorGrid : GodotObject
         );
     }
 
-    /// <summary>
-    /// Checks if a given position is safe within the defined Size.
-    /// </summary>
-    /// <param name="position">The position to check.</param>
-    /// <returns>True if the position is safe, False otherwise.</returns>
-    protected bool IsPositionSafe(Vector2I position)
-    {
-        return (position.X >= 0 && position.X < Size.X &&
-                position.Y >= 0 && position.Y <= Size.Y);
-    }
+
 
     /// <summary>
     /// Adjusts position by a given direction and returns the safe target
