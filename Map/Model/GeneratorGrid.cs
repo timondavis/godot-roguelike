@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using Godot;
 
@@ -83,6 +84,48 @@ public partial class GeneratorGrid : GodotObject
 
     public void MoveTo(Vector2I target)
     {
+        var safeTarget = SafePosition(target);
+        Current = GridCells[safeTarget.X, safeTarget.Y];
+    }
+
+    /// <summary>
+    /// Queries a grid cell in a relative direction.
+    /// </summary>
+    /// <param name="direction">The direction in which to query the grid cell.</param>
+    /// <param name="safeValuesOnly">If true, unsafe values will be clamped into range. If false (default),
+    /// null is returned for cells outside of range</param>
+    /// <returns>The queried grid cell if safe position, or null otherwise.</returns>
+    public GridCell RelativeQuery(Direction direction, bool safeValuesOnly = false)
+    {
+        Vector2I newPosition;
+        if (safeValuesOnly)
+        {
+            newPosition = SafeAdjustPositionByDirection(Current.Position, direction);
+        }
+        else
+        { 
+            newPosition = AdjustPositionByDirection(Current.Position, direction);
+        }
+
+        return (IsPositionSafe(newPosition)) ? 
+            GridCells[newPosition.X, newPosition.Y] : 
+            null;
+    }
+
+    /// <summary>
+    /// Retrieves the adjacent GridCells in the specified directions.
+    /// </summary>
+    /// <param name="directionSet">The set of directions representing the adjacent cells to query.</param>
+    /// <returns>A Dictionary containing the direction as the key and the corresponding GridCell as the value.  Cells which are out of grid range are returned as nulls.</returns>
+    public Godot.Collections.Dictionary<Direction, GridCell> RelativeQuery(HashSet<Direction> directionSet)
+    {
+        var results = new Godot.Collections.Dictionary<Direction, GridCell>();
+        foreach (Direction direction in directionSet)
+        {
+            results.Add(direction, RelativeQuery(direction));
+        }
+
+        return results;
     }
 
     private void InitializeGrid()
@@ -97,16 +140,27 @@ public partial class GeneratorGrid : GodotObject
     }
 
     /// <summary>
-    /// Returns a safe target point for a given target by clamping its coordinates to be within the boundaries of the Size.
+    /// Ensures that the given position is within the bounds defined by the Size property.
     /// </summary>
-    /// <param name="target">The target point to make safe.</param>
-    /// <returns>A Vector2I representing the safe target point.</returns>
-    protected Vector2I SafeTarget(Vector2I target)
+    /// <param name="position">The input position to be checked.</param>
+    /// <returns>A new Vector2I instance with X and Y values clamped to fit within the Size bounds.</returns>
+    protected Vector2I SafePosition(Vector2I position)
     {
         return new Vector2I(
-            Math.Clamp(target.X, 0, Size.X),
-            Math.Clamp(target.Y, 0, Size.Y)
+            Math.Clamp(position.X, 0, Size.X),
+            Math.Clamp(position.Y, 0, Size.Y)
         );
+    }
+
+    /// <summary>
+    /// Checks if a given position is safe within the defined Size.
+    /// </summary>
+    /// <param name="position">The position to check.</param>
+    /// <returns>True if the position is safe, False otherwise.</returns>
+    protected bool IsPositionSafe(Vector2I position)
+    {
+        return (position.X >= 0 && position.X < Size.X &&
+                position.Y >= 0 && position.Y <= Size.Y);
     }
 
     /// <summary>
@@ -118,10 +172,6 @@ public partial class GeneratorGrid : GodotObject
     protected Vector2I SafeAdjustPositionByDirection(Vector2I position, Direction direction)
     {
         Vector2I adjusted = AdjustPositionByDirection(position, direction);
-        return SafeTarget(adjusted);
+        return SafePosition(adjusted);
     }
-    
-    
-    
-    
 }
