@@ -6,8 +6,18 @@ namespace Roguelike.Map.Generator;
 
 public partial class MapGenerator : Node
 {
-	public GeneratorGrid Grid;
+	
+	[Export] 
+	public int Width { get; set; }
+	
+	[Export] 
+	public int Height { get; set; }
 
+	[Signal]
+	public delegate void MapGeneratedEventHandler(GeneratorGrid grid);
+	
+	public GeneratorGrid Grid;
+	
 	public virtual void GenerateGrid()
 	{
 		if (Width > 0 && Height > 0)
@@ -15,12 +25,6 @@ public partial class MapGenerator : Node
 			InitializeGrid();
 		}	
 	}
-
-	[Export] 
-	public int Width { get; set; }
-	
-	[Export] 
-	public int Height { get; set; }
 
 	public void InitializeGrid()
 	{

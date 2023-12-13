@@ -23,6 +23,7 @@ public partial class LifeMapGenerator : MapGenerator
 		InitializeGrid();
 		var numberOfStartPoints = HowManyStartPoints();
 		GenerateStartPoints(numberOfStartPoints);
+		var active = Grid.QueryActiveCells();
 		var a = 1;
 	}
 

@@ -1,7 +1,13 @@
-[gd_scene load_steps=2 format=3 uid="uid://bd8l36w4uxr48"]
+[gd_scene load_steps=3 format=3 uid="uid://bd8l36w4uxr48"]
 
-[ext_resource type="PackedScene" uid="uid://bkegod1jmbymp" path="res://Map/LifeGeneratedMap.tscn" id="1_78dip"]
+[ext_resource type="PackedScene" uid="uid://bkegod1jmbymp" path="res://Map/GeneratedMap.tscn" id="1_78dip"]
+[ext_resource type="Script" path="res://Map/Generator/LifeMapGenerator.cs" id="2_xtxpb"]
 
 [node name="Main" type="Node"]
 
 [node name="LifeGeneratedMap" parent="." instance=ExtResource("1_78dip")]
+
+[node name="LifeMapGenerator2" type="Node" parent="."]
+script = ExtResource("2_xtxpb")
+
+[connection signal="MapGenerated" from="LifeMapGenerator2" to="LifeGeneratedMap" method="OnLifeMapGenerated"]

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using Godot;
 
 namespace Roguelike.Map.Model;
@@ -31,8 +30,10 @@ public partial class GeneratorGrid : GodotObject
 
 	public GeneratorGrid(Vector2I size)
 	{
-		GridCells = new GridCell[size.X, size.Y];
+		Size = size;
+		GridCells = new GridCell[Size.X, Size.Y];
 		InitializeGrid();
+		Current = GridCells[0, 0];
 	}
 	
 	/// <summary>
@@ -142,13 +143,35 @@ public partial class GeneratorGrid : GodotObject
 				position.Y >= 0 && position.Y <= Size.Y);
 	}
 
+	/// <summary>
+	/// Queries the grid for all active or inactive cells based on the specified isActive parameter.
+	/// </summary>
+	/// <param name="isActive">A boolean indicating whether to search for active or inactive cells.</param>
+	/// <returns>A dictionary of Vector2I keys and GridCell values representing the found cells.</returns>
+	public Dictionary<Vector2I, GridCell> QueryActiveCells(bool isActive = true)
+	{
+		var found = new Dictionary<Vector2I, GridCell>();
+		for (int x = 0 ; x < Size.X ; x++)
+		{
+			for (int y = 0; y < Size.Y; y++)
+			{
+				if (isActive == GridCells[x, y].IsActive)
+				{
+					found.Add(new Vector2I(x,y), GridCells[x,y]);
+				}	
+			}
+		}
+
+		return found;
+	}
+
 	private void InitializeGrid()
 	{
 		for (int x = 0; x < Size.X; x++)
 		{
 			for( int y = 0 ; y < Size.Y; y++ )
 			{
-				GridCells[x, y] = new GridCell();
+				GridCells[x, y] = new GridCell(x,y);
 			}
 		}
 	}
@@ -161,12 +184,10 @@ public partial class GeneratorGrid : GodotObject
 	protected Vector2I SafePosition(Vector2I position)
 	{
 		return new Vector2I(
-			Math.Clamp(position.X, 0, Size.X),
-			Math.Clamp(position.Y, 0, Size.Y)
+			Math.Clamp(position.X, 0, Size.X -1 ),
+			Math.Clamp(position.Y, 0, Size.Y -1 )
 		);
 	}
-
-
 
 	/// <summary>
 	/// Adjusts position by a given direction and returns the safe target

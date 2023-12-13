@@ -1,17 +1,18 @@
 [gd_scene load_steps=4 format=3 uid="uid://bkegod1jmbymp"]
 
-[ext_resource type="Script" path="res://Map/LifeGeneratedMap.cs" id="1_0gq0j"]
+[ext_resource type="Script" path="res://Map/GeneratedMap.cs" id="1_0gq0j"]
 [ext_resource type="TileSet" uid="uid://bb5dug3f8yq6k" path="res://Map/TileSet/Dungeon A.tres" id="1_q2adx"]
 [ext_resource type="Script" path="res://Map/Generator/LifeMapGenerator.cs" id="3_i23up"]
 
-[node name="LifeGeneratedMap" type="TileMap" node_paths=PackedStringArray("GeneratorAlgorithm")]
+[node name="GeneratedMap" type="TileMap"]
 tile_set = ExtResource("1_q2adx")
 format = 2
 script = ExtResource("1_0gq0j")
-GeneratorAlgorithm = NodePath("LifeMapGenerator")
 
 [node name="LifeMapGenerator" type="Node" parent="."]
 script = ExtResource("3_i23up")
 StartingDensity = 0.081
 Width = 50
 Height = 50
+
+[connection signal="MapGenerated" from="LifeMapGenerator" to="." method="OnMapGenerated"]
