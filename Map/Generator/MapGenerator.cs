@@ -4,10 +4,17 @@ using Roguelike.Map.Model;
 
 namespace Roguelike.Map.Generator;
 
-public abstract class MapGenerator : Node
+public partial class MapGenerator : Node
 {
 	public GeneratorGrid Grid;
-	public abstract void GenerateGrid();
+
+	public virtual void GenerateGrid()
+	{
+		if (Width > 0 && Height > 0)
+		{
+			InitializeGrid();
+		}	
+	}
 
 	[Export] 
 	public int Width { get; set; }
@@ -24,7 +31,7 @@ public abstract class MapGenerator : Node
 		else
 		{
 			throw new ArgumentOutOfRangeException("Width and Height must be set before initializing " +
-			                                      "MapGenerator's Generator Grid.");
+												  "MapGenerator's Generator Grid.");
 		}
 	}
 }
