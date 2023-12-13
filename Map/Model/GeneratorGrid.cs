@@ -142,7 +142,7 @@ public partial class GeneratorGrid : GodotObject
 		return (position.X >= 0 && position.X < Size.X &&
 				position.Y >= 0 && position.Y < Size.Y);
 	}
-
+	
 	/// <summary>
 	/// Queries the grid for all active or inactive cells based on the specified isActive parameter.
 	/// </summary>

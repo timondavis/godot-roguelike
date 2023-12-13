@@ -15,6 +15,9 @@ public partial class MapGenerator : Node
 
 	[Signal]
 	public delegate void MapGeneratedEventHandler(GeneratorGrid grid);
+
+	[Signal]
+	public delegate void MapUpdatedEventHandler(GeneratorGrid grid);
 	
 	public GeneratorGrid Grid;
 	
@@ -23,7 +26,9 @@ public partial class MapGenerator : Node
 		if (Width > 0 && Height > 0)
 		{
 			InitializeGrid();
-		}	
+		}
+
+		EmitSignal(MapGenerator.SignalName.MapGenerated, Grid);
 	}
 
 	public void InitializeGrid()
