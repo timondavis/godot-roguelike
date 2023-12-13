@@ -140,7 +140,7 @@ public partial class GeneratorGrid : GodotObject
 	public bool IsPositionSafe(Vector2I position)
 	{
 		return (position.X >= 0 && position.X < Size.X &&
-				position.Y >= 0 && position.Y <= Size.Y);
+				position.Y >= 0 && position.Y < Size.Y);
 	}
 
 	/// <summary>

@@ -24,7 +24,7 @@ public partial class LifeMapGenerator : MapGenerator
 		var numberOfStartPoints = HowManyStartPoints();
 		GenerateStartPoints(numberOfStartPoints);
 		var active = Grid.QueryActiveCells();
-		var a = 1;
+		EmitSignal(MapGenerator.SignalName.MapGenerated, Grid );
 	}
 
 	private int HowManyStartPoints()

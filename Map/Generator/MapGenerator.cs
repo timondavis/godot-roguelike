@@ -28,7 +28,7 @@ public partial class MapGenerator : Node
 
 	public void InitializeGrid()
 	{
-		if (Width >= 0 && Height >= 0)
+		if (Width > 0 && Height > 0)
 		{
 			Grid = new GeneratorGrid(new Vector2I(Width, Height));
 		}
