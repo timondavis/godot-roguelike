@@ -15,6 +15,9 @@ public partial class LifeMapGenerator : MapGenerator
 	
 	[Export( PropertyHint.Range, "1, 1000, 1)" )]
 	public int LifeCycles { get; set; }
+	
+	[Export]
+	public float CycleEmissionDelay { get; set; }
 
 	public override void _Ready()
 	{
@@ -28,18 +31,27 @@ public partial class LifeMapGenerator : MapGenerator
 		var numberOfStartPoints = HowManyStartPoints();
 		GenerateStartPoints(numberOfStartPoints);
 		var active = Grid.QueryActiveCells();
-		EmitSignal(MapGenerator.SignalName.MapGenerated, Grid );
+		base.EmitGenerated();
+		RunLife();
 	}
 
 	/// <summary>
 	/// Runs the Life simulation for a specified number of life cycles.
 	/// </summary>
-	private void RunLife()
+	private async void RunLife()
 	{
 		for (int cycle = 0; cycle < LifeCycles; cycle++)
 		{
 			RunLifeCycle();
+			
+			if (CycleEmissionDelay > 0)
+			{
+				await ToSignal(GetTree().CreateTimer(CycleEmissionDelay), SceneTreeTimer.SignalName.Timeout);
+				EmitSignal(MapGenerator.SignalName.MapUpdated, Grid);
+			}
 		}
+
+		EmitSignal(MapGenerator.SignalName.MapFinalized, Grid);
 	}
 
 	/// <summary>
@@ -71,7 +83,6 @@ public partial class LifeMapGenerator : MapGenerator
 	/// <summary>
 	/// Assess the life of a cell based on its neighbors and update the life tracker accordingly.
 	/// </summary>
-	/// <param name="lifeTracker">The 2D boolean array that tracks the life of each cell.</param>
 	/// <param name="position">The position of the cell to assess.</param>
 	private void AssessCellLife(ref bool[,] lifeTracker, Vector2I position)
 	{
@@ -101,8 +112,6 @@ public partial class LifeMapGenerator : MapGenerator
 				lifeTracker[x, y] = false;
 			}
 		}
-
-		lifeTracker[x, y] = isAlive;
 	}
 
 	private int HowManyStartPoints()
@@ -153,9 +162,20 @@ public partial class LifeMapGenerator : MapGenerator
 		var results = Grid.RelativeQuery(GetSurroundPattern());
 		var activeCount = 0;
 
+		var targetPosition = new Vector2I(x, y);
+
+		if (!Grid.IsPositionSafe(targetPosition))
+		{
+			throw new ArgumentOutOfRangeException(nameof(targetPosition), "Position is not safe on the grid.");
+		}
+		
+		Grid.MoveTo(new Vector2I(x,y));	
 		foreach (var result in results)
 		{
-			activeCount += (result.Value.IsActive) ? 1 : 0;
+			if (result.Value != null)
+			{
+				activeCount += (result.Value.IsActive) ? 1 : 0;
+			}
 		}
 
 		return activeCount;
@@ -190,13 +210,9 @@ public partial class LifeMapGenerator : MapGenerator
 		return new HashSet<GeneratorGrid.Direction>
 		{
 			GeneratorGrid.Direction.North,
-			GeneratorGrid.Direction.NorthEast,
 			GeneratorGrid.Direction.East,
-			GeneratorGrid.Direction.SouthEast,
 			GeneratorGrid.Direction.South,
-			GeneratorGrid.Direction.SouthWest,
 			GeneratorGrid.Direction.West,
-			GeneratorGrid.Direction.NorthWest,
 		};
 	}
 } 

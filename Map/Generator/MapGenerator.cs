@@ -18,8 +18,16 @@ public partial class MapGenerator : Node
 
 	[Signal]
 	public delegate void MapUpdatedEventHandler(GeneratorGrid grid);
+
+	[Signal]
+	public delegate void MapFinalizedEventHandler(GeneratorGrid grid);
 	
 	public GeneratorGrid Grid;
+	
+	protected void EmitGenerated()
+	{
+		EmitSignal(SignalName.MapGenerated, Grid);
+	}
 	
 	public virtual void GenerateGrid()
 	{
@@ -27,8 +35,6 @@ public partial class MapGenerator : Node
 		{
 			InitializeGrid();
 		}
-
-		EmitSignal(MapGenerator.SignalName.MapGenerated, Grid);
 	}
 
 	public void InitializeGrid()

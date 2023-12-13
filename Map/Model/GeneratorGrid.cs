@@ -50,31 +50,31 @@ public partial class GeneratorGrid : GodotObject
 		switch (direction)
 		{
 			case Direction.North:
-				newPosition.Y += 1;
+				newPosition.Y -= 1;
 				break;
 			case Direction.NorthEast:
-				newPosition.Y += 1;
+				newPosition.Y -= 1;
 				newPosition.X += 1;
 				break;
 			case Direction.East:
 				newPosition.X += 1;
 				break;
 			case Direction.SouthEast:
-				newPosition.Y -= 1;
+				newPosition.Y += 1;
 				newPosition.X += 1;
 				break;
 			case Direction.South:
-				newPosition.Y -= 1;
+				newPosition.Y += 1;
 				break;
 			case Direction.SouthWest:
-				newPosition.Y -= 1;
+				newPosition.Y += 1;
 				newPosition.X -= 1;
 				break;
 			case Direction.West:
 				newPosition.X -= 1;
 				break;
 			case Direction.NorthWest:
-				newPosition.Y += 1;
+				newPosition.Y -= 1;
 				newPosition.X -= 1;
 				break;
 			case Direction.Here:

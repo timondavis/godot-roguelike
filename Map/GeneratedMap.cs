@@ -8,8 +8,6 @@ public partial class GeneratedMap : TileMap
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		TileSetSource source = TileSet.GetSource(1);
-		
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -19,7 +17,6 @@ public partial class GeneratedMap : TileMap
 
 	private void OnMapGenerated(GeneratorGrid grid)
 	{
-		var cells = grid.GridCells;
 		for (int x = 0; x < grid.Size.X ; x++)
 		{
 			for (int y = 0; y < grid.Size.Y; y++)
@@ -28,7 +25,16 @@ public partial class GeneratedMap : TileMap
 				{
 					SetCell(0, new Vector2I( x, y ), 0, new Vector2I(3, 0) );	
 				}
+				else
+				{
+					EraseCell(0, new Vector2I(x,y));
+				}
 			}	
 		}
 	}
-}
+
+	private void OnMapUpdated(GeneratorGrid grid)
+	{
+		OnMapGenerated(grid);
+	}
+} 
