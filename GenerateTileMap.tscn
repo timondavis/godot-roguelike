@@ -11,9 +11,9 @@ script = ExtResource("1_i8rel")
 
 [node name="LifeMapGenerator" type="Node" parent="."]
 script = ExtResource("2_wx7np")
-StartingDensity = 0.305
-LifeCycles = 20
-CycleEmissionDelay = 2.16
+StartingDensity = 0.089
+LifeCycles = 1000
+CycleEmissionDelay = 0.55
 Width = 50
 Height = 50
 

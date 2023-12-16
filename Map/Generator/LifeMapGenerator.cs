@@ -159,17 +159,15 @@ public partial class LifeMapGenerator : MapGenerator
 
 	private int CountActiveNeighbors(int x, int y)
 	{
-		var results = Grid.RelativeQuery(GetSurroundPattern());
 		var activeCount = 0;
-
 		var targetPosition = new Vector2I(x, y);
-
 		if (!Grid.IsPositionSafe(targetPosition))
 		{
 			throw new ArgumentOutOfRangeException(nameof(targetPosition), "Position is not safe on the grid.");
 		}
-		
-		Grid.MoveTo(new Vector2I(x,y));	
+
+		Grid.MoveTo(targetPosition);
+		var results = Grid.RelativeQuery(GetSurroundPattern());
 		foreach (var result in results)
 		{
 			if (result.Value != null)
@@ -210,9 +208,13 @@ public partial class LifeMapGenerator : MapGenerator
 		return new HashSet<GeneratorGrid.Direction>
 		{
 			GeneratorGrid.Direction.North,
+			GeneratorGrid.Direction.NorthEast,
 			GeneratorGrid.Direction.East,
+			GeneratorGrid.Direction.SouthEast,
 			GeneratorGrid.Direction.South,
+			GeneratorGrid.Direction.SouthWest,
 			GeneratorGrid.Direction.West,
+			GeneratorGrid.Direction.NorthWest,
 		};
 	}
 } 
