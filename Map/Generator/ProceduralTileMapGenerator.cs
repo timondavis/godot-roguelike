@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 using Roguelike.Map.Generator;
@@ -24,6 +25,8 @@ public partial class ProceduralTileMapGenerator : Node
 	// Path to JSON file which describes the relationships between the Tiles found in a TileSet
 	// and their corresponding TileTypes, as provided by the MapGenerator.
 	public string TileAssociationsPath { get; set; }
+
+	public Dictionary<TileType, HashSet<TileAddress>> TileTypeAssignments { get; private set; }
 	
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
@@ -32,6 +35,8 @@ public partial class ProceduralTileMapGenerator : Node
 		ActiveMapGenerator.MapGenerated += OnMapGenerated;
 		ActiveMapGenerator.MapUpdated += OnMapUpdated;
 		ActiveMapGenerator.MapFinalized += OnMapFinalized;
+
+		TileTypeAssignments = new Dictionary<TileType, HashSet<TileAddress>>();
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.

@@ -9,12 +9,6 @@ namespace Roguelike.Map.Generator;
 public abstract partial class MapGenerator : Node
 {
 	
-	[Export] 
-	public int Width { get; set; }
-	
-	[Export] 
-	public int Height { get; set; }
-
 	[Signal]
 	public delegate void MapGeneratedEventHandler(GeneratorGrid grid);
 
@@ -24,11 +18,20 @@ public abstract partial class MapGenerator : Node
 	[Signal]
 	public delegate void MapFinalizedEventHandler(GeneratorGrid grid);
 	
-	public GeneratorGrid Grid;
+	public int Width { get; private set; }
 	
-	protected void EmitGenerated()
+	public int Height { get; private set; }
+
+	public TileTypeList TileTypes { get; private set; }
+
+
+	public GeneratorGrid Grid;
+
+	public MapGenerator(int width, int height)
 	{
-		EmitSignal(SignalName.MapGenerated, Grid);
+		Width = width;
+		Height = height;
+		TileTypes = new TileTypeList();
 	}
 	
 	public abstract void GenerateGrid();
