@@ -1,10 +1,12 @@
 using System;
 using Godot;
+using System.Collections;
+using System.Collections.Generic;
 using Roguelike.Map.Model;
 
 namespace Roguelike.Map.Generator;
 
-public partial class MapGenerator : Node
+public abstract partial class MapGenerator : Node
 {
 	
 	[Export] 
@@ -29,13 +31,7 @@ public partial class MapGenerator : Node
 		EmitSignal(SignalName.MapGenerated, Grid);
 	}
 	
-	public virtual void GenerateGrid()
-	{
-		if (Width > 0 && Height > 0)
-		{
-			InitializeGrid();
-		}
-	}
+	public abstract void GenerateGrid();
 
 	public void InitializeGrid()
 	{
