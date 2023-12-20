@@ -4,9 +4,19 @@ using System.Collections.Generic;
 
 public partial class TileType : GodotObject, IEquatable<TileType>
 {
+    /// <summary>
+    /// Gets or sets the name.
+    /// </summary>
     public string Name { get; set; }
+
+    /// <summary>
+    /// Represents a dictionary containing key-value pairs of strings.
+    /// </summary>
     public Dictionary<string, string> Data;
 
+    /// <summary>
+    /// Represents a tile type.
+    /// </summary>
     public TileType()
     {
         Data = new Dictionary<string, string>();
