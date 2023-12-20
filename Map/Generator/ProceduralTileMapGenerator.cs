@@ -1,10 +1,12 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 using Roguelike.Map.Generator;
 using Roguelike.Map.Model;
 
+/// <summary
 public partial class ProceduralTileMapGenerator : Node
 {
 	[Export] 
@@ -24,6 +26,14 @@ public partial class ProceduralTileMapGenerator : Node
 	// Path to JSON file which describes the relationships between the Tiles found in a TileSet
 	// and their corresponding TileTypes, as provided by the MapGenerator.
 	public string TileAssociationsPath { get; set; }
+
+	/// <summary>
+	/// Gets the dictionary that contains the tile type assignments.
+	/// </summary>
+	/// <value>
+	/// The dictionary that contains the tile type assignments.
+	/// </value>
+	public Dictionary<TileType, HashSet<TileAddress>> TileTypeAssignments { get; private set; }
 	
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
@@ -32,6 +42,8 @@ public partial class ProceduralTileMapGenerator : Node
 		ActiveMapGenerator.MapGenerated += OnMapGenerated;
 		ActiveMapGenerator.MapUpdated += OnMapUpdated;
 		ActiveMapGenerator.MapFinalized += OnMapFinalized;
+
+		TileTypeAssignments = new Dictionary<TileType, HashSet<TileAddress>>();
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -39,6 +51,10 @@ public partial class ProceduralTileMapGenerator : Node
 	{
 	}
 
+	/// <summary>
+	/// This method is invoked when the node is about to be removed from the scene tree.
+	/// It is responsible for cleaning up any resources or event subscriptions.
+	/// </summary>
 	public override void _ExitTree()
 	{
 		// Remove Connects to ActiveMapGenerator Delegates. 

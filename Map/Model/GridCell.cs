@@ -4,18 +4,24 @@ using Godot.Collections;
 
 namespace Roguelike.Map.Model;
 
+/// <summary
 public partial class GridCell : GodotObject
 {
 	/// <summary>
 	/// Gets or sets a value indicating whether the object is active or not.
 	/// </summary>
-	public bool IsActive { get; set; }
+	public bool IsActive { get; private set; }
+	
+	/// <summary>
+	/// Gets or sets the type of the tile.
+	/// </summary>
+	public TileType Type { get; private set; }
 
 	/// <summary>
 	/// Gets or sets the position of an object.
 	/// </summary>
-	public Vector2I Position { get; set; }
-
+	public Vector2I Position { get; private set; }
+	
 	/// <summary>
 	/// Gets or sets the data associated with the property.
 	/// </summary>
@@ -29,9 +35,36 @@ public partial class GridCell : GodotObject
 	/// </summary>
 	public GridCell(int x = 0, int y = 0)
 	{
-		Position = new Vector2I(x, y);
+		var position = new Vector2I(x, y);
+		InitializeGridCell(position);
+	}
+	
+	/// <summary>
+	/// Represents a cell in a grid.
+	/// </summary>
+	/// <param name="position">The position of the cell in the grid.</param>
+	public GridCell(Vector2I position)
+	{
+		InitializeGridCell(position);
+	}
+
+	/// <summary>
+	/// Activates the specified tile with the given type.
+	/// </summary>
+	/// <param name="type">The type of the tile to activate.</param>
+	public void Activate(TileType type)
+	{
+		IsActive = true;
+		Type = type;
+	}
+
+	/// <summary>
+	/// Deactivates the object.
+	/// </summary>
+	public void Deactivate()
+	{
 		IsActive = false;
-		Data = new Dictionary<string, string>();
+		Type = null;
 	}
 
 	/// <summary>
@@ -59,11 +92,13 @@ public partial class GridCell : GodotObject
 	}
 
 	/// <summary>
-	/// Represents a cell in a grid.
+	/// Initializes a grid cell with the given position.
 	/// </summary>
-	/// <param name="position">The position of the cell in the grid.</param>
-	public GridCell(Vector2I position)
+	/// <param name="position">The position of the grid cell.</param>
+	private void InitializeGridCell(Vector2I position)
 	{
 		Position = position;
+		IsActive = false;
+		Data = new Dictionary<string, string>();	
 	}
 }
