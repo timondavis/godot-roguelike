@@ -153,18 +153,5 @@ public partial class ProceduralTileMapGenerator : Node
 		{
 			// Handle exception and terminate load.
 		}
-
-
-
-
-
-
-		/*
-		var jsonContent = File.ReadAllText(TileAssociationsPath);
-		var jsonData = JsonDocument.Parse(jsonContent);
-var a = 1;
-		*/
-
-		// .. with Json Data, you can now inform the appropriate data structure..
 	}
 }
