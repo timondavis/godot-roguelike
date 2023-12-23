@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using Godot;
+using Roguelike.Map.Model;
 using FileAccess = Godot.FileAccess;
 
 namespace Roguelike.Map.Generator;
@@ -97,6 +99,55 @@ public partial class ProceduralTileMapGenerator : Node
 		if (error == Godot.Error.Ok)
 		{
 			var data = json.Data;
+			Godot.Collections.Dictionary dictionary = data.AsGodotDictionary();
+
+			if (dictionary.ContainsKey("tiletype_associations"))
+			{
+				Godot.Collections.Array tileTypeAssociations = dictionary["tiletype_associations"].AsGodotArray();
+				for (int i = 0; i < tileTypeAssociations.Count ; i++)
+				{
+					Godot.Collections.Dictionary tileTypeAssociation = tileTypeAssociations[i].AsGodotDictionary();
+					string tileTypeName = tileTypeAssociation["tiletype"].AsString();
+					
+					// Throw exception if tileTypeName not found
+					
+					TileType tileType = ActiveMapGenerator.TileTypes.FindByName(tileTypeName);
+					
+					// Throw exception if tileType not found
+
+					Godot.Collections.Array tileAddressArray = tileTypeAssociation["association"].AsGodotArray();
+					
+					// Throw exception if tileAddressGenericArray not found.
+
+					for (int j = 0; j < tileAddressArray.Count; j++)
+					{
+						Godot.Collections.Dictionary tileAddressGenericDictionary = tileAddressArray[j].AsGodotDictionary();
+						var atlasId = tileAddressGenericDictionary["atlasId"].AsInt32();
+						var atlasX = tileAddressGenericDictionary["atlasX"].AsInt32();
+						var atlasY = tileAddressGenericDictionary["atlasY"].AsInt32();
+						
+						TileAddress tileAddress = new TileAddress(atlasId, new Vector2I( atlasX, atlasY) );
+
+						if (!TileTypeAssignments.ContainsKey(tileType))
+						{
+							TileTypeAssignments.Add(tileType, new HashSet<TileAddress>());
+						}
+
+						HashSet<TileAddress> writeToHashSet;
+						TileTypeAssignments.TryGetValue(tileType, out writeToHashSet);
+
+						if (writeToHashSet != null)
+						{
+							writeToHashSet.Add(tileAddress);
+						}
+						
+						// Throw exception if no writeToHashSet
+							
+					}
+					
+				}
+				var a = 1;
+			}
 		}
 		else
 		{

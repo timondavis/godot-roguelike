@@ -6,6 +6,8 @@ namespace Roguelike.Map.Generator;
 
 public partial class LifeMapGenerator : Roguelike.Map.Generator.MapGenerator
 {
+	public const string TileType_Floor = "floor";
+	
 	[Export(PropertyHint.Range, "0.01, 1.00, 0.01" )] 
 	public float StartingDensity { get; set; }
 	
@@ -17,13 +19,13 @@ public partial class LifeMapGenerator : Roguelike.Map.Generator.MapGenerator
 
 	public LifeMapGenerator() : base()
 	{
+		TileTypes.Add(new Model.TileType { Name=TileType_Floor } );
 	}
 
 	public override void _Ready()
 	{
 		base._Ready();
 		GenerateGrid();
-		TileTypes.Add(new Model.TileType { Name="Floor" } );
 	}
 
 	public override void GenerateGrid()
@@ -78,7 +80,7 @@ public partial class LifeMapGenerator : Roguelike.Map.Generator.MapGenerator
 			{
 				if (lifeTracker[x, y])
 				{
-					Grid.GridCells[x,y].Activate( TileTypes.FindByName("Floor") );
+					Grid.GridCells[x,y].Activate( TileTypes.FindByName(TileType_Floor) );
 				}
 				else
 				{
@@ -159,7 +161,7 @@ public partial class LifeMapGenerator : Roguelike.Map.Generator.MapGenerator
 			{
 				if (cell.Value != null)
 				{
-					cell.Value.Activate(TileTypes.FindByName("Floor"));
+					cell.Value.Activate(TileTypes.FindByName(TileType_Floor));
 				} 
 			}
 		}

@@ -1,7 +1,7 @@
 using System;
 using Godot;
 
-public abstract class TileAddress : Tuple<int, Vector2I>
+public class TileAddress : Tuple<int, Vector2I>
 {
     /// <summary>
     /// Gets the AtlasId of the tile.
