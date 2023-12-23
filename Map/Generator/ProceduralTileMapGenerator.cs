@@ -91,67 +91,112 @@ public partial class ProceduralTileMapGenerator : Node
 				"The active map generator, source tileset, or tile associations path is missing.");
 		}
 
-		var json = new Json();
-		var file = FileAccess.Open(TileAssociationsPath, FileAccess.ModeFlags.Read);
+		Json json = loadAndExtractAssociationJson();
+		
+		var data = json.Data;
+		Godot.Collections.Dictionary dictionary = data.AsGodotDictionary();
+		ValidateTopLevelAssociationJsonFile(dictionary);
+		
+		Godot.Collections.Array tileTypeAssociations = dictionary["tiletype_associations"].AsGodotArray();
+		
+		for (int i = 0; i < tileTypeAssociations.Count ; i++)
+		{
+			Godot.Collections.Dictionary tileTypeAssociation = tileTypeAssociations[i].AsGodotDictionary();
+			ValidateAssociationStructureInJsonFile(tileTypeAssociation) ;
+			
+			string tileTypeName = tileTypeAssociation["tiletype"].AsString();
+			TileType tileType = ActiveMapGenerator.TileTypes.FindByName(tileTypeName);
+			VerifyJsonIsRequestingValidTileType(tileTypeName, tileType);
+
+			Godot.Collections.Array tileAddressArray = tileTypeAssociation["association"].AsGodotArray();
+
+			for (int j = 0; j < tileAddressArray.Count; j++)
+			{
+				Godot.Collections.Dictionary tileAddressDictionary = tileAddressArray[j].AsGodotDictionary();
+				ValidateTileAddressJson(tileAddressDictionary);
+
+				TileAddress tileAddress = new TileAddress(
+					tileAddressDictionary["atlasId"].AsInt32(),
+					tileAddressDictionary["atlasX"].AsInt32(),
+					tileAddressDictionary["atlasY"].AsInt32()
+				);
+
+				if (!TileTypeAssignments.ContainsKey(tileType))
+				{
+					TileTypeAssignments.Add(tileType, new HashSet<TileAddress>());
+				}
+
+				HashSet<TileAddress> writeToHashSet;
+				TileTypeAssignments.TryGetValue(tileType, out writeToHashSet);
+				writeToHashSet.Add(tileAddress);
+			}
+		}
+	}
+
+	private Json loadAndExtractAssociationJson()
+	{
+		Json json = new Json();
+		Godot.FileAccess file = FileAccess.Open(TileAssociationsPath, FileAccess.ModeFlags.Read);
+		if (file == null)
+		{
+			throw new FileNotFoundException("The specified json file could not be found or loaded.", TileAssociationsPath);	
+		}
 		Godot.Error error = json.Parse(file.GetAsText());
 		file.Close();
 
-		if (error == Godot.Error.Ok)
+		if (error != Godot.Error.Ok)
 		{
-			var data = json.Data;
-			Godot.Collections.Dictionary dictionary = data.AsGodotDictionary();
-
-			if (dictionary.ContainsKey("tiletype_associations"))
-			{
-				Godot.Collections.Array tileTypeAssociations = dictionary["tiletype_associations"].AsGodotArray();
-				for (int i = 0; i < tileTypeAssociations.Count ; i++)
-				{
-					Godot.Collections.Dictionary tileTypeAssociation = tileTypeAssociations[i].AsGodotDictionary();
-					string tileTypeName = tileTypeAssociation["tiletype"].AsString();
-					
-					// Throw exception if tileTypeName not found
-					
-					TileType tileType = ActiveMapGenerator.TileTypes.FindByName(tileTypeName);
-					
-					// Throw exception if tileType not found
-
-					Godot.Collections.Array tileAddressArray = tileTypeAssociation["association"].AsGodotArray();
-					
-					// Throw exception if tileAddressGenericArray not found.
-
-					for (int j = 0; j < tileAddressArray.Count; j++)
-					{
-						Godot.Collections.Dictionary tileAddressGenericDictionary = tileAddressArray[j].AsGodotDictionary();
-						var atlasId = tileAddressGenericDictionary["atlasId"].AsInt32();
-						var atlasX = tileAddressGenericDictionary["atlasX"].AsInt32();
-						var atlasY = tileAddressGenericDictionary["atlasY"].AsInt32();
-						
-						TileAddress tileAddress = new TileAddress(atlasId, new Vector2I( atlasX, atlasY) );
-
-						if (!TileTypeAssignments.ContainsKey(tileType))
-						{
-							TileTypeAssignments.Add(tileType, new HashSet<TileAddress>());
-						}
-
-						HashSet<TileAddress> writeToHashSet;
-						TileTypeAssignments.TryGetValue(tileType, out writeToHashSet);
-
-						if (writeToHashSet != null)
-						{
-							writeToHashSet.Add(tileAddress);
-						}
-						
-						// Throw exception if no writeToHashSet
-							
-					}
-					
-				}
-				var a = 1;
-			}
+			throw new IOException("An error occurred while parsing the json file.");	
 		}
-		else
+
+		return json;
+	}
+
+	private void ValidateTopLevelAssociationJsonFile(Godot.Collections.Dictionary dictionary)
+	{
+		if (!dictionary.ContainsKey("tiletype_associations"))
 		{
-			// Handle exception and terminate load.
+			throw new InvalidOperationException("Required key 'tiletype_associations' is missing from the source json file");
+		}	
+	}
+
+	private void ValidateAssociationStructureInJsonFile(Godot.Collections.Dictionary dictionary)
+	{
+		// Check for required property names
+		if (!dictionary.ContainsKey("tiletype"))
+		{
+			throw new InvalidOperationException("Required key 'tiletype' is missing from the source json file");
 		}
+
+		if (!dictionary.ContainsKey("association"))
+		{
+			throw new InvalidOperationException("Required key 'association' is missing from the source json file");
+		}	
+	}
+
+	private void VerifyJsonIsRequestingValidTileType(string tileTypeName, TileType tileType)
+	{
+		if (tileType == null)
+		{
+			throw new InvalidOperationException("TileType '" + tileTypeName +
+			                                    "' was specified in source json, but does not exist on ActiveMapGenerator.");
+		}	
+	}
+
+	private void ValidateTileAddressJson(Godot.Collections.Dictionary dictionary)
+	{
+		// Throw error if required keys not found
+		if (!dictionary.ContainsKey("atlasId"))
+		{
+			throw new InvalidOperationException("Required key 'atlasId' is missing from the source json file");
+		}
+		if (!dictionary.ContainsKey("atlasX"))
+		{
+			throw new InvalidOperationException("Required key 'atlasX' is missing from the source json file");
+		}
+		if (!dictionary.ContainsKey("atlasY"))
+		{
+			throw new InvalidOperationException("Required key 'atlasY' is missing from the source json file");
+		}	
 	}
 }

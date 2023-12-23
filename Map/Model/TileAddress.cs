@@ -39,4 +39,8 @@ public class TileAddress : Tuple<int, Vector2I>
     public TileAddress(int atlasId, Vector2I position) : base(atlasId, position)
     {
     }
+
+    public TileAddress(int atlastId, int atlasX, int atlasY) : base(atlastId, new Vector2I(atlasX, atlasY))
+    {
+    }
 }
