@@ -1,5 +1,4 @@
 using Godot;
-using Roguelike.Map.Model;
 
 namespace Roguelike.Map;
 
@@ -15,7 +14,7 @@ public partial class GeneratedMap : TileMap
 	{
 	}
 
-	private void OnMapGenerated(GeneratorGrid grid)
+	private void OnMapGenerated(Roguelike.Map.Model.GeneratorGrid grid)
 	{
 		for (int x = 0; x < grid.Size.X ; x++)
 		{
@@ -33,8 +32,8 @@ public partial class GeneratedMap : TileMap
 		}
 	}
 
-	private void OnMapUpdated(GeneratorGrid grid)
+	private void OnMapUpdated(Roguelike.Map.Model.GeneratorGrid grid)
 	{
 		OnMapGenerated(grid);
 	}
-} 
+}

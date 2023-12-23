@@ -1,0 +1,19 @@
+{
+	"tiletype_associations": [
+		{
+			"tiletype": "floor",
+			"association": [
+				{
+					"atlasId": 0,
+					"atlasX": 0,
+					"atlasY": 0
+				},
+				{
+					"atlasId": 0,
+					"atlasX": 4,
+					"atlasY": 1
+				}
+			]
+		}
+	]
+}

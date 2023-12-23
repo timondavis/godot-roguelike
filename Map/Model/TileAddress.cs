@@ -1,8 +1,6 @@
 using System;
 using Godot;
 
-namespace Roguelike.Map.Model;
-
 public class TileAddress : Tuple<int, Vector2I>
 {
     /// <summary>
@@ -39,6 +37,10 @@ public class TileAddress : Tuple<int, Vector2I>
     /// <param name="atlasId">The ID of the atlas that the tile belongs to.</param>
     /// <param name="position">The position of the tile in 2D space.</param>
     public TileAddress(int atlasId, Vector2I position) : base(atlasId, position)
+    {
+    }
+
+    public TileAddress(int atlastId, int atlasX, int atlasY) : base(atlastId, new Vector2I(atlasX, atlasY))
     {
     }
 }

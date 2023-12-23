@@ -1,7 +1,20 @@
-[gd_scene load_steps=2 format=3 uid="uid://bd8l36w4uxr48"]
+[gd_scene load_steps=3 format=3 uid="uid://bd8l36w4uxr48"]
 
-[ext_resource type="PackedScene" uid="uid://dtof7phs064jv" path="res://LifeMap.tscn" id="1_3ruer"]
+[ext_resource type="PackedScene" uid="uid://dwu2yg5brqcda" path="res://ProceduralTileMapGenerator.tscn" id="1_xps0p"]
+[ext_resource type="Script" path="res://Map/Generator/LifeMapGenerator.cs" id="2_n0a50"]
 
 [node name="Main" type="Node"]
 
-[node name="LifeMap" parent="." instance=ExtResource("1_3ruer")]
+[node name="TileMap" type="TileMap" parent="."]
+format = 2
+
+[node name="ProceduralTileMapGenerator" parent="." node_paths=PackedStringArray("ActiveTileMap", "ActiveMapGenerator") instance=ExtResource("1_xps0p")]
+ActiveTileMap = NodePath("../TileMap")
+ActiveMapGenerator = NodePath("../LifeMapGenerator")
+
+[node name="LifeMapGenerator" type="Node" parent="."]
+script = ExtResource("2_n0a50")
+LifeCycles = 1000
+CycleEmissionDelay = 1.0
+Width = 10
+Height = 10

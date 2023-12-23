@@ -1,6 +1,8 @@
-using Godot;
 using System;
 using System.Collections.Generic;
+using Godot;
+
+namespace Roguelike.Map.Model;
 
 public partial class TileType : GodotObject, IEquatable<TileType>
 {
