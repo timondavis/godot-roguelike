@@ -1,14 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Net;
 using Godot;
-using Roguelike.Map.Model;
-
 
 namespace Roguelike.Map.Generator;
 
-public partial class LifeMapGenerator : MapGenerator
+public partial class LifeMapGenerator : Roguelike.Map.Generator.MapGenerator
 {
 	[Export(PropertyHint.Range, "0.01, 1.00, 0.01" )] 
 	public float StartingDensity { get; set; }
@@ -19,10 +15,15 @@ public partial class LifeMapGenerator : MapGenerator
 	[Export]
 	public float CycleEmissionDelay { get; set; }
 
+	public LifeMapGenerator() : base()
+	{
+	}
+
 	public override void _Ready()
 	{
 		base._Ready();
 		GenerateGrid();
+		TileTypes.Add(new Model.TileType { Name="Floor" } );
 	}
 
 	public override void GenerateGrid()
@@ -31,7 +32,7 @@ public partial class LifeMapGenerator : MapGenerator
 		var numberOfStartPoints = HowManyStartPoints();
 		GenerateStartPoints(numberOfStartPoints);
 		var active = Grid.QueryActiveCells();
-		base.EmitGenerated();
+		EmitSignal(Roguelike.Map.Generator.MapGenerator.SignalName.MapGenerated, Grid);
 		RunLife();
 	}
 
@@ -47,11 +48,11 @@ public partial class LifeMapGenerator : MapGenerator
 			if (CycleEmissionDelay > 0)
 			{
 				await ToSignal(GetTree().CreateTimer(CycleEmissionDelay), SceneTreeTimer.SignalName.Timeout);
-				EmitSignal(MapGenerator.SignalName.MapUpdated, Grid);
+				EmitSignal(Roguelike.Map.Generator.MapGenerator.SignalName.MapUpdated, Grid);
 			}
 		}
 
-		EmitSignal(MapGenerator.SignalName.MapFinalized, Grid);
+		EmitSignal(Roguelike.Map.Generator.MapGenerator.SignalName.MapFinalized, Grid);
 	}
 
 	/// <summary>
@@ -75,7 +76,14 @@ public partial class LifeMapGenerator : MapGenerator
 		{
 			for (int y = 0; y < Grid.Size.Y; y++)
 			{
-				Grid.GridCells[x,y].IsActive = lifeTracker[x,y];
+				if (lifeTracker[x, y])
+				{
+					Grid.GridCells[x,y].Activate( TileTypes.FindByName("Floor") );
+				}
+				else
+				{
+					Grid.GridCells[x,y].Deactivate();
+				}
 			}
 		}
 	}
@@ -124,8 +132,8 @@ public partial class LifeMapGenerator : MapGenerator
 	{
 		int x, y;
 
-		HashSet<GeneratorGrid.Direction> starPattern = GetStarPattern();
-		HashSet<GeneratorGrid.Direction> plusPattern = GetPlusPattern();
+		HashSet<Model.GeneratorGrid.Direction> starPattern = GetStarPattern();
+		HashSet<Model.GeneratorGrid.Direction> plusPattern = GetPlusPattern();
 		
 		// Just in case we can't find any more unique values, set a threshold and count failed attempts
 		// To generate Unique values.
@@ -136,7 +144,7 @@ public partial class LifeMapGenerator : MapGenerator
 			y = (int)GD.RandRange(0, Height);
 			Grid.MoveTo(new Vector2I(x, y));
 
-			Godot.Collections.Dictionary<GeneratorGrid.Direction, GridCell> cells;
+			Godot.Collections.Dictionary<Model.GeneratorGrid.Direction, Model.GridCell> cells;
 
 			if (i % 2 == 0)
 			{
@@ -151,7 +159,7 @@ public partial class LifeMapGenerator : MapGenerator
 			{
 				if (cell.Value != null)
 				{
-					cell.Value.IsActive = true;
+					cell.Value.Activate(TileTypes.FindByName("Floor"));
 				} 
 			}
 		}
@@ -179,42 +187,43 @@ public partial class LifeMapGenerator : MapGenerator
 		return activeCount;
 	}
 
-	private HashSet<GeneratorGrid.Direction> GetStarPattern()
+	private HashSet<Model.GeneratorGrid.Direction> GetStarPattern()
 	{
-		return new HashSet<GeneratorGrid.Direction>
+		return new HashSet<Model.GeneratorGrid.Direction>
 		{
-			GeneratorGrid.Direction.Here,
-			GeneratorGrid.Direction.NorthWest,
-			GeneratorGrid.Direction.NorthEast,
-			GeneratorGrid.Direction.SouthWest,
-			GeneratorGrid.Direction.SouthEast,
+			Model.GeneratorGrid.Direction.Here,
+			Model.GeneratorGrid.Direction.NorthWest,
+			Model.GeneratorGrid.Direction.NorthEast,
+			Model.GeneratorGrid.Direction.SouthWest,
+			Model.GeneratorGrid.Direction.SouthEast,
 		}; 
 	}
 
-	private HashSet<GeneratorGrid.Direction> GetPlusPattern()
+	private HashSet<Model.GeneratorGrid.Direction> GetPlusPattern()
 	{
-		return new HashSet<GeneratorGrid.Direction>
+		return new HashSet<Model.GeneratorGrid.Direction>
 		{
-			GeneratorGrid.Direction.Here,
-			GeneratorGrid.Direction.East,
-			GeneratorGrid.Direction.South,
-			GeneratorGrid.Direction.West,
-			GeneratorGrid.Direction.North
+			Model.GeneratorGrid.Direction.Here,
+			Model.GeneratorGrid.Direction.East,
+			Model.GeneratorGrid.Direction.South,
+			Model.GeneratorGrid.Direction.West,
+			Model.GeneratorGrid.Direction.North
 		}; 
 	}
 
-	private HashSet<GeneratorGrid.Direction> GetSurroundPattern()
+	private HashSet<Model.GeneratorGrid.Direction> GetSurroundPattern()
 	{
-		return new HashSet<GeneratorGrid.Direction>
+		return new HashSet<Model.GeneratorGrid.Direction>
 		{
-			GeneratorGrid.Direction.North,
-			GeneratorGrid.Direction.NorthEast,
-			GeneratorGrid.Direction.East,
-			GeneratorGrid.Direction.SouthEast,
-			GeneratorGrid.Direction.South,
-			GeneratorGrid.Direction.SouthWest,
-			GeneratorGrid.Direction.West,
-			GeneratorGrid.Direction.NorthWest,
+			Model.GeneratorGrid.Direction.North,
+			Model.GeneratorGrid.Direction.NorthEast,
+			Model.GeneratorGrid.Direction.East,
+			Model.GeneratorGrid.Direction.SouthEast,
+			Model.GeneratorGrid.Direction.South,
+			Model.GeneratorGrid.Direction.SouthWest,
+			Model.GeneratorGrid.Direction.West,
+			Model.GeneratorGrid.Direction.NorthWest,
 		};
 	}
-} 
+
+}

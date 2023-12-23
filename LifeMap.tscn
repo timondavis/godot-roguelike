@@ -14,8 +14,6 @@ script = ExtResource("2_wx7np")
 StartingDensity = 0.13
 LifeCycles = 1000
 CycleEmissionDelay = 0.24
-Width = 50
-Height = 50
 
 [connection signal="MapGenerated" from="LifeMapGenerator" to="." method="OnMapGenerated"]
 [connection signal="MapUpdated" from="LifeMapGenerator" to="." method="OnMapUpdated"]

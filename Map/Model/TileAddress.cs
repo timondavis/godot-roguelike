@@ -1,9 +1,7 @@
 using System;
 using Godot;
 
-namespace Roguelike.Map.Model;
-
-public class TileAddress : Tuple<int, Vector2I>
+public abstract class TileAddress : Tuple<int, Vector2I>
 {
     /// <summary>
     /// Gets the AtlasId of the tile.
