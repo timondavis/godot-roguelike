@@ -14,7 +14,8 @@ ActiveMapGenerator = NodePath("../LifeMapGenerator")
 
 [node name="LifeMapGenerator" type="Node" parent="."]
 script = ExtResource("2_n0a50")
+StartingDensity = 0.101
 LifeCycles = 1000
-CycleEmissionDelay = 1.0
-Width = 10
-Height = 10
+CycleEmissionDelay = 0.1
+Width = 30
+Height = 30

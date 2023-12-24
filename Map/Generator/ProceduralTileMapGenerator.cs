@@ -2,13 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.Json;
 using Godot;
 using Roguelike.Map.Model;
 using FileAccess = Godot.FileAccess;
 
 namespace Roguelike.Map.Generator;
 
+/// <summary>
+/// ProceduralTileMapGenerator class is responsible for generating and rendering a procedural tile map using a given map generator and tile set.
+/// </summary>
 public partial class ProceduralTileMapGenerator : Node
 {
 	[Export] 
@@ -46,6 +48,7 @@ public partial class ProceduralTileMapGenerator : Node
 		ActiveMapGenerator.MapFinalized += OnMapFinalized;
 
 		TileTypeAssignments = new Dictionary<Model.TileType, HashSet<TileAddress>>();
+		ActiveTileMap.TileSet = SourceTileSet;
 
 		ReadTileAssociations();
 	}
@@ -67,16 +70,82 @@ public partial class ProceduralTileMapGenerator : Node
 		ActiveMapGenerator.MapFinalized -= OnMapFinalized;	
 	}
 
+	/// <summary>
+	/// Executes when a map is generated.
+	/// </summary>
+	/// <param name="grid">The generated grid.</param>
 	private void OnMapGenerated(Model.GeneratorGrid grid)
 	{
+		RenderGrid(grid);
 	}
 
+	/// <summary>
+	/// Handles the event when the map is updated.
+	/// </summary>
+	/// <param name="grid">The updated generator grid.</param>
 	private void OnMapUpdated(Model.GeneratorGrid grid)
 	{
+		OnMapGenerated(grid);
 	}
 
+	/// <summary>
+	/// The method is called when the map generation process has been finalized.
+	/// It triggers the OnMapGenerated event passing the generated grid as a parameter.
+	/// </summary>
+	/// <param name="grid">The generated grid object.</param>
 	private void OnMapFinalized(Model.GeneratorGrid grid)
 	{
+		OnMapGenerated(grid);
+	}
+
+	/// <summary>
+	/// Renders the given generator grid by assigning tiles to grid cells based on their type.
+	/// </summary>
+	/// <param name="grid">The generator grid to render.</param>
+	/// <exception cref="InvalidOperationException">
+	/// Thrown if the type of a grid cell is not found in the TileTypeAssignments dictionary.
+	/// Thrown if no tiles are available for a grid cell's tile type in the TileTypeAssignments dictionary.
+	/// </exception>
+	private void RenderGrid(GeneratorGrid grid)
+	{
+		TileType currentTileType;
+		HashSet<TileAddress> currentTilesAvailable;
+		for (int x = 0; x < grid.Size.X ; x++)
+		{
+			for (int y = 0; y < grid.Size.Y; y++)
+			{
+				GridCell cell = grid.GridCells[x, y];
+
+				if (!cell.IsActive)
+				{
+					ActiveTileMap.EraseCell(0, new Vector2I(x,y));
+					continue;
+				}
+				
+				currentTileType = grid.GridCells[x, y].Type;
+				if (currentTileType == null)
+				{
+					throw new InvalidOperationException("Type (TileType) not found on Grid Cell [" + x.ToString() +
+														"," + y.ToString() + "]");
+				}
+				
+				currentTilesAvailable = TileTypeAssignments[currentTileType];
+				if (currentTilesAvailable == null)
+				{
+					throw new InvalidOperationException("Invalid TileType on Type property of Grid Cell [" + x.ToString() + "," + y.ToString() + "]");
+				}
+
+				int tileListLength = currentTilesAvailable.Count;
+				if (tileListLength == 0)
+				{
+					throw new InvalidOperationException("No TileSet tiles are avilable for TileType " + currentTileType.Name);
+				}
+				int randomIndex = new Random().Next(tileListLength);
+				TileAddress randomTile = currentTilesAvailable.ElementAt(randomIndex);
+				
+				ActiveTileMap.SetCell(0, new Vector2I( x, y ), randomTile.AtlasId, randomTile.Position );	
+			}	
+		}	
 	}
 
 	/// <summary>
@@ -151,7 +220,7 @@ public partial class ProceduralTileMapGenerator : Node
 
 		return json;
 	}
-
+	
 	private void ValidateTopLevelAssociationJsonFile(Godot.Collections.Dictionary dictionary)
 	{
 		if (!dictionary.ContainsKey("tiletype_associations"))
@@ -179,7 +248,7 @@ public partial class ProceduralTileMapGenerator : Node
 		if (tileType == null)
 		{
 			throw new InvalidOperationException("TileType '" + tileTypeName +
-			                                    "' was specified in source json, but does not exist on ActiveMapGenerator.");
+												"' was specified in source json, but does not exist on ActiveMapGenerator.");
 		}	
 	}
 
