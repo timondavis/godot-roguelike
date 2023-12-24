@@ -7,15 +7,24 @@ namespace Roguelike.Map.Generator;
 public partial class CellularAutomataMapGenerator : Roguelike.Map.Generator.MapGenerator
 {
 	public const string TileType_Floor = "floor";
-	
-	[Export(PropertyHint.Range, "0.01, 1.00, 0.01" )] 
-	public float StartingDensity { get; set; }
-	
-	[Export( PropertyHint.Range, "1, 1000, 1)" )]
-	public int LifeCycles { get; set; }
-	
-	[Export]
-	public float CycleEmissionDelay { get; set; }
+
+	[Export(PropertyHint.Range, "0.01, 1.00, 0.01")]
+	public float StartingDensity;
+
+	[Export(PropertyHint.Range, "1, 1000, 1)")]
+	public int LifeCycles;
+
+	[Export] public float CycleEmissionDelay;
+
+	// Settings for life generation and sustainance. By default, implements Game of Life.
+	[Export] 
+	public int MinNeighborsForSustainedLife = 2;
+	[Export] 
+	public int MaxNeighborsForSustainedLife = 3;
+	[Export] 
+	public int MinNeighborsForNewLife = 3;
+	[Export] 
+	public int MaxNeighborsForNewLife = 3;
 
 	public CellularAutomataMapGenerator() : base()
 	{
@@ -102,18 +111,18 @@ public partial class CellularAutomataMapGenerator : Roguelike.Map.Generator.MapG
 		int aliveNeighbors = CountActiveNeighbors(x, y);
 		if (isAlive)
 		{
-			if (aliveNeighbors < 2 || aliveNeighbors > 3)
+			if (aliveNeighbors >= MinNeighborsForSustainedLife && aliveNeighbors <= MaxNeighborsForSustainedLife )
 			{
-				lifeTracker[x, y] = false;
+				lifeTracker[x, y] = true;
 			}
 			else
 			{
-				lifeTracker[x, y] = true;
+				lifeTracker[x, y] = false;
 			}
 		}
 		else
 		{
-			if (aliveNeighbors == 3)
+			if (aliveNeighbors >= MinNeighborsForNewLife && aliveNeighbors <= MaxNeighborsForNewLife)
 			{
 				lifeTracker[x, y] = true;
 			}
