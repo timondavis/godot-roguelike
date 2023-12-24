@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text.Json;
 using Godot;
 using Roguelike.Map.Model;
@@ -46,6 +47,7 @@ public partial class ProceduralTileMapGenerator : Node
 		ActiveMapGenerator.MapFinalized += OnMapFinalized;
 
 		TileTypeAssignments = new Dictionary<Model.TileType, HashSet<TileAddress>>();
+		ActiveTileMap.TileSet = SourceTileSet;
 
 		ReadTileAssociations();
 	}
@@ -69,14 +71,54 @@ public partial class ProceduralTileMapGenerator : Node
 
 	private void OnMapGenerated(Model.GeneratorGrid grid)
 	{
+		TileType currentTileType;
+		HashSet<TileAddress> currentTilesAvailable;
+		for (int x = 0; x < grid.Size.X ; x++)
+		{
+			for (int y = 0; y < grid.Size.Y; y++)
+			{
+				GridCell cell = grid.GridCells[x, y];
+
+				if (!cell.IsActive)
+				{
+					ActiveTileMap.EraseCell(0, new Vector2I(x,y));
+					continue;
+				}
+				
+				currentTileType = grid.GridCells[x, y].Type;
+				if (currentTileType == null)
+				{
+					throw new InvalidOperationException("Type (TileType) not found on Grid Cell [" + x.ToString() +
+														"," + y.ToString() + "]");
+				}
+				
+				currentTilesAvailable = TileTypeAssignments[currentTileType];
+				if (currentTilesAvailable == null)
+				{
+					throw new InvalidOperationException("Invalid TileType on Type property of Grid Cell [" + x.ToString() + "," + y.ToString() + "]");
+				}
+
+				int tileListLength = currentTilesAvailable.Count;
+				if (tileListLength == 0)
+				{
+					throw new InvalidOperationException("No TileSet tiles are avilable for TileType " + currentTileType.Name);
+				}
+				int randomIndex = new Random().Next(tileListLength);
+				TileAddress randomTile = currentTilesAvailable.ElementAt(randomIndex);
+				
+				ActiveTileMap.SetCell(0, new Vector2I( x, y ), randomTile.AtlasId, randomTile.Position );	
+			}	
+		}
 	}
 
 	private void OnMapUpdated(Model.GeneratorGrid grid)
 	{
+		OnMapGenerated(grid);
 	}
 
 	private void OnMapFinalized(Model.GeneratorGrid grid)
 	{
+		OnMapGenerated(grid);
 	}
 
 	/// <summary>
@@ -179,7 +221,7 @@ public partial class ProceduralTileMapGenerator : Node
 		if (tileType == null)
 		{
 			throw new InvalidOperationException("TileType '" + tileTypeName +
-			                                    "' was specified in source json, but does not exist on ActiveMapGenerator.");
+												"' was specified in source json, but does not exist on ActiveMapGenerator.");
 		}	
 	}
 
