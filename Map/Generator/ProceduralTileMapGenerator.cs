@@ -2,14 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Text.Json;
 using Godot;
 using Roguelike.Map.Model;
 using FileAccess = Godot.FileAccess;
 
 namespace Roguelike.Map.Generator;
 
+/// <summary>
+/// ProceduralTileMapGenerator class is responsible for generating and rendering a procedural tile map using a given map generator and tile set.
+/// </summary>
 public partial class ProceduralTileMapGenerator : Node
 {
 	[Export] 
@@ -69,7 +70,43 @@ public partial class ProceduralTileMapGenerator : Node
 		ActiveMapGenerator.MapFinalized -= OnMapFinalized;	
 	}
 
+	/// <summary>
+	/// Executes when a map is generated.
+	/// </summary>
+	/// <param name="grid">The generated grid.</param>
 	private void OnMapGenerated(Model.GeneratorGrid grid)
+	{
+		RenderGrid(grid);
+	}
+
+	/// <summary>
+	/// Handles the event when the map is updated.
+	/// </summary>
+	/// <param name="grid">The updated generator grid.</param>
+	private void OnMapUpdated(Model.GeneratorGrid grid)
+	{
+		OnMapGenerated(grid);
+	}
+
+	/// <summary>
+	/// The method is called when the map generation process has been finalized.
+	/// It triggers the OnMapGenerated event passing the generated grid as a parameter.
+	/// </summary>
+	/// <param name="grid">The generated grid object.</param>
+	private void OnMapFinalized(Model.GeneratorGrid grid)
+	{
+		OnMapGenerated(grid);
+	}
+
+	/// <summary>
+	/// Renders the given generator grid by assigning tiles to grid cells based on their type.
+	/// </summary>
+	/// <param name="grid">The generator grid to render.</param>
+	/// <exception cref="InvalidOperationException">
+	/// Thrown if the type of a grid cell is not found in the TileTypeAssignments dictionary.
+	/// Thrown if no tiles are available for a grid cell's tile type in the TileTypeAssignments dictionary.
+	/// </exception>
+	private void RenderGrid(GeneratorGrid grid)
 	{
 		TileType currentTileType;
 		HashSet<TileAddress> currentTilesAvailable;
@@ -108,17 +145,7 @@ public partial class ProceduralTileMapGenerator : Node
 				
 				ActiveTileMap.SetCell(0, new Vector2I( x, y ), randomTile.AtlasId, randomTile.Position );	
 			}	
-		}
-	}
-
-	private void OnMapUpdated(Model.GeneratorGrid grid)
-	{
-		OnMapGenerated(grid);
-	}
-
-	private void OnMapFinalized(Model.GeneratorGrid grid)
-	{
-		OnMapGenerated(grid);
+		}	
 	}
 
 	/// <summary>
@@ -193,7 +220,7 @@ public partial class ProceduralTileMapGenerator : Node
 
 		return json;
 	}
-
+	
 	private void ValidateTopLevelAssociationJsonFile(Godot.Collections.Dictionary dictionary)
 	{
 		if (!dictionary.ContainsKey("tiletype_associations"))
