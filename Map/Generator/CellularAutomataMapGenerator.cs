@@ -4,7 +4,7 @@ using Godot;
 
 namespace Roguelike.Map.Generator;
 
-public partial class LifeMapGenerator : Roguelike.Map.Generator.MapGenerator
+public partial class CellularAutomataMapGenerator : Roguelike.Map.Generator.MapGenerator
 {
 	public const string TileType_Floor = "floor";
 	
@@ -17,7 +17,7 @@ public partial class LifeMapGenerator : Roguelike.Map.Generator.MapGenerator
 	[Export]
 	public float CycleEmissionDelay { get; set; }
 
-	public LifeMapGenerator() : base()
+	public CellularAutomataMapGenerator() : base()
 	{
 		TileTypes.Add(new Model.TileType { Name=TileType_Floor } );
 	}
