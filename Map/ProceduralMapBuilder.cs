@@ -11,7 +11,7 @@ namespace Roguelike.Map.Generator;
 /// <summary>
 /// ProceduralTileMapGenerator class is responsible for generating and rendering a procedural tile map using a given map generator and tile set.
 /// </summary>
-public partial class ProceduralTileMapGenerator : Node
+public partial class ProceduralMapBuilder : Node
 {
 	[Export] 
 	//  The Active Tile Map to be mainipulated
