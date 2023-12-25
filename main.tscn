@@ -9,16 +9,16 @@
 [node name="TileMap" type="TileMap" parent="."]
 format = 2
 
-[node name="LevelBuilder" type="Node" parent="." node_paths=PackedStringArray("ActiveTileMap", "ActiveMapGenerator")]
+[node name="Map Builder" type="Node" parent="." node_paths=PackedStringArray("ActiveTileMap", "ActiveMapGenerator")]
 script = ExtResource("1_os0gb")
 ActiveTileMap = NodePath("../TileMap")
 SourceTileSet = ExtResource("2_wjtum")
-ActiveMapGenerator = NodePath("../CellularAutomataMapGenerator")
+ActiveMapGenerator = NodePath("../Map Generator")
 TileAssociationsPath = "res://Asset/TileTypeAssociation/simple-tile-association.json"
 
-[node name="CellularAutomataMapGenerator" type="Node" parent="."]
+[node name="Map Generator" type="Node" parent="."]
 script = ExtResource("3_2o4gr")
-StartingDensity = 0.106
+StartingDensity = 0.109
 LifeCycles = 1000
 CycleEmissionDelay = 0.1
 Width = 50
