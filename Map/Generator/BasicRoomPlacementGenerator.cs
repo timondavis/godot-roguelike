@@ -127,21 +127,15 @@ public partial class BasicRoomPlacementGenerator : MapGenerator
 		{
 			double centerX = (double)(startX) + (double)(roomWidth / 2.0);
 			double centerY = (double)(startY) + (double)(roomHeight / 2.0);
-			Rooms.Add(new RectangleRoom
+			RectangleRoom room  = new RectangleRoom
 			{
 				Center = new Vector2I( (int) Math.Floor( centerX ), (int) Math.Floor( centerY ) ),
 				TopLeft = new Vector2I(startX, startY),
 				Size = new Vector2I(roomWidth, roomHeight)
-			});
+			};
 			
-			for (int x = startX; x < startX + roomWidth; x++)
-			{
-				for (int y = startY; y < startY + roomHeight; y++)
-				{
-					Grid.MoveTo(new Vector2I(x,y));
-					Grid.Current.Activate(floorTileType);	
-				}
-			}
+			Grid.FillRect(room.TopLeft,room.Size, floorTileType);
+			Rooms.Add(room);
 			
 			return true;
 		}

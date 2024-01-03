@@ -24,29 +24,8 @@ public partial class RoomConnector : GodotObject
        Vector2I midPoint = new Vector2I(start.X, end.Y);
        
        // Draw the actual line
-       Line(start, midPoint);
-       Line(midPoint, end);
-    }
-
-    public void Line(Vector2I start, Vector2I end, bool replace = false)
-    {
-        Grid.MoveTo(start);
-
-        Vector2I nextPosition = new Vector2I(start.X, start.Y);
-        while (Grid.Current.Position != end)
-        {
-            if (!Grid.Current.IsActive)
-            {
-                Grid.Current.Activate(TileType);
-            }
-
-            int xMultiplier = (start.X).CompareTo(end.X) * -1;
-            int yMultiplier = (start.Y).CompareTo(end.Y) * -1;
-
-            nextPosition.X += (1 * xMultiplier);
-            nextPosition.Y += (1 * yMultiplier);
-            
-            Grid.MoveTo(nextPosition);
-        }
+       Grid.MoveTo(start);
+       Grid.LineTo(midPoint, TileType);
+       Grid.LineTo(end, TileType);
     }
 }

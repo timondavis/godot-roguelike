@@ -92,6 +92,42 @@ public partial class GeneratorGrid : GodotObject
 		Current = GridCells[safeTarget.X, safeTarget.Y];
 	}
 
+	public void LineTo(Vector2I target, TileType tileType)
+	{
+		var start = new Vector2I(Current.Position.X, Current.Position.Y);
+		if (IsPositionSafe(target))
+		{
+			Vector2I nextPosition = new Vector2I(start.X, start.Y);
+			while (Current.Position != target)
+			{
+				if (!Current.IsActive)
+				{
+					Current.Activate(tileType);
+				}
+
+				int xMultiplier = (start.X).CompareTo(target.X) * -1;
+				int yMultiplier = (start.Y).CompareTo(target.Y) * -1;
+
+				nextPosition.X += (1 * xMultiplier);
+				nextPosition.Y += (1 * yMultiplier);
+            
+				MoveTo(nextPosition);
+			}
+		}
+	}
+
+	public void FillRect(Vector2I topLeft, Vector2I dimensions, TileType tileType)
+	{
+		for (int x = topLeft.X; x < topLeft.X + dimensions.X ; x++)
+		{
+			for (int y = topLeft.Y; y < topLeft.Y + dimensions.Y; y++)
+			{
+				MoveTo(new Vector2I(x,y));
+				Current.Activate(tileType);	
+			}
+		}	
+	}
+
 	/// <summary>
 	/// Queries a grid cell in a relative direction.
 	/// </summary>
