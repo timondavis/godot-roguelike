@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 using Roguelike.Map.Generator;
 using Roguelike.Map.Model;
 using static Godot.PropertyHint;
@@ -19,6 +20,7 @@ public partial class BasicRoomPlacementGenerator : MapGenerator
 
 	public int NumberOfRooms = 0;
 	public int RoomApplicationAttemptsMax = 100;
+	public HashSet<RectangleRoom> Rooms = new HashSet<RectangleRoom>();
 	
 	public BasicRoomPlacementGenerator() : base()
 	{
@@ -105,6 +107,11 @@ public partial class BasicRoomPlacementGenerator : MapGenerator
 				{
 					Grid.MoveTo(new Vector2I(x,y));
 					Grid.Current.Activate(floorTileType);
+					Rooms.Add(new RectangleRoom
+					{
+						Center = new Vector2I(startX, startY),
+						Size = new Vector2I(roomWidth, roomHeight)
+					});
 				}
 			}
 			
