@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Roguelike.Map.Generator;
 using Roguelike.Map.Model;
 using static Godot.PropertyHint;
@@ -57,17 +58,23 @@ public partial class BasicRoomPlacementGenerator : MapGenerator
 		
 		InitializeGrid();
 		GD.Randomize();
-		NumberOfRooms = GD.RandRange(RoomCountMin, RoomCountMax);
-		_PlaceRooms();
+		_Generate();
 	}
 
-	private async void _PlaceRooms()
+	private async void _Generate()
 	{
+		NumberOfRooms = GD.RandRange(RoomCountMin, RoomCountMax);
+		await _PlaceRooms();
+		await _ConnectRooms();
+		EmitSignal(SignalName.MapFinalized);	
+	}
 
+	private async Task _PlaceRooms()
+	{
 		int currentRoomCounter = 0;
 		int attemptsForCurrentRoom = 0;
 		bool isRoomPlaced;
-		while (currentRoomCounter < NumberOfRooms && attemptsForCurrentRoom < RoomApplicationAttemptsMax )
+		while (currentRoomCounter < NumberOfRooms && attemptsForCurrentRoom < RoomApplicationAttemptsMax)
 		{
 			isRoomPlaced = _PlaceRoom();
 			if (isRoomPlaced)
@@ -86,8 +93,25 @@ public partial class BasicRoomPlacementGenerator : MapGenerator
 				attemptsForCurrentRoom++;
 			}
 		}
+	}
 
-		EmitSignal(SignalName.MapFinalized, Grid);	
+	private async Task _ConnectRooms()
+	{
+		PathFinder pf = new PathFinder(Grid, TileTypes.FindByName(TileType_Floor));
+		Queue<RectangleRoom> path = pf.FindRectangleRoomPath(Rooms);
+
+		RectangleRoom room1;
+		RectangleRoom room2;
+		RoomConnector rc = new RoomConnector(Grid, TileTypes.FindByName(TileType_Floor));
+		while (path.TryDequeue(out room1) && path.TryPeek(out room2))
+		{
+			rc.ConnectRooms(room1, room2);
+			if (CycleEmissionDelay > 0)
+			{
+				await ToSignal(GetTree().CreateTimer(CycleEmissionDelay), SceneTreeTimer.SignalName.Timeout);
+				EmitSignal(SignalName.MapUpdated, Grid);
+			}
+		}
 	}
 
 	private bool _PlaceRoom()
@@ -101,17 +125,21 @@ public partial class BasicRoomPlacementGenerator : MapGenerator
 		// Return false if conflict is found.
 		if (_IsRoomAvailable(startX, startY, roomWidth, roomHeight))
 		{
+			double centerX = (double)(startX) + (double)(roomWidth / 2.0);
+			double centerY = (double)(startY) + (double)(roomHeight / 2.0);
+			Rooms.Add(new RectangleRoom
+			{
+				Center = new Vector2I( (int) Math.Floor( centerX ), (int) Math.Floor( centerY ) ),
+				TopLeft = new Vector2I(startX, startY),
+				Size = new Vector2I(roomWidth, roomHeight)
+			});
+			
 			for (int x = startX; x < startX + roomWidth; x++)
 			{
 				for (int y = startY; y < startY + roomHeight; y++)
 				{
 					Grid.MoveTo(new Vector2I(x,y));
-					Grid.Current.Activate(floorTileType);
-					Rooms.Add(new RectangleRoom
-					{
-						Center = new Vector2I(startX, startY),
-						Size = new Vector2I(roomWidth, roomHeight)
-					});
+					Grid.Current.Activate(floorTileType);	
 				}
 			}
 			
