@@ -7,7 +7,7 @@ using Roguelike.Map.Model;
 
 public partial class BinarySpacePartiationGenerator : BasicRoomPlacementGenerator
 {
-    /*
+    
     protected async Task PlaceRooms()
     {
         // Calculate Depth of BSP Algorithm such that it should faciltiate the chosen number of rooms.
@@ -15,15 +15,16 @@ public partial class BinarySpacePartiationGenerator : BasicRoomPlacementGenerato
         int minBinaryDepth = (int) Math.Ceiling(preciseBinaryDepth);
         
         TileType floorTileType = TileTypes.FindByName(TileType_Floor);
+        RectangleRoom[] divisions;
+        Room EntireGrid = new RectangleRoom();
 
         for (int roomCounter = 0; roomCounter < NumberOfRooms; roomCounter++)
         {
-            
+            divisions = _Subdivide()
         }
     }
-    */
 
-    private RectangleRoom[] Subdivide(RectangleRoom levelArea)
+    private RectangleRoom[] _Subdivide(RectangleRoom levelArea)
     {
         int dividerX = levelArea.TopLeft.X + (int) Math.Ceiling(levelArea.Size.X / 2.0);
         int dividerY = levelArea.TopLeft.Y + (int)Math.Ceiling(levelArea.Size.Y / 2.0);
