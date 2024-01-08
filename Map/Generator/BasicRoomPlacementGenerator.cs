@@ -61,7 +61,7 @@ public partial class BasicRoomPlacementGenerator : MapGenerator
 		_Generate();
 	}
 
-	private async void _Generate()
+	protected async void _Generate()
 	{
 		NumberOfRooms = GD.RandRange(RoomCountMin, RoomCountMax);
 		await _PlaceRooms();
@@ -69,7 +69,7 @@ public partial class BasicRoomPlacementGenerator : MapGenerator
 		EmitSignal(SignalName.MapFinalized);	
 	}
 
-	private async Task _PlaceRooms()
+	protected virtual async Task _PlaceRooms()
 	{
 		int currentRoomCounter = 0;
 		int attemptsForCurrentRoom = 0;
@@ -95,7 +95,7 @@ public partial class BasicRoomPlacementGenerator : MapGenerator
 		}
 	}
 
-	private async Task _ConnectRooms()
+	protected virtual async Task _ConnectRooms()
 	{
 		PathFinder pf = new PathFinder(Grid, TileTypes.FindByName(TileType_Floor));
 		Queue<RectangleRoom> path = pf.FindRectangleRoomPath(Rooms);
@@ -114,7 +114,7 @@ public partial class BasicRoomPlacementGenerator : MapGenerator
 		}
 	}
 
-	private bool _PlaceRoom()
+	protected virtual bool _PlaceRoom()
 	{
 		int roomWidth = GD.RandRange(RoomSizeMin, RoomSizeMax);
 		int roomHeight = GD.RandRange(RoomSizeMin, RoomSizeMax);
@@ -143,7 +143,7 @@ public partial class BasicRoomPlacementGenerator : MapGenerator
 		return false;
 	}
 
-	private bool _IsRoomAvailable(int startX, int startY, int roomWidth, int roomHeight)
+	protected virtual bool _IsRoomAvailable(int startX, int startY, int roomWidth, int roomHeight)
 	{
 		for (int x = startX; x < startX + roomWidth; x++)
 		{
