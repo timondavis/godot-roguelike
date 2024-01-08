@@ -110,7 +110,7 @@ public partial class GeneratorGrid : GodotObject
 
 				nextPosition.X += (1 * xMultiplier);
 				nextPosition.Y += (1 * yMultiplier);
-            
+			
 				MoveTo(nextPosition);
 			}
 		}
