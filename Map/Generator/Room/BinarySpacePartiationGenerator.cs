@@ -120,7 +120,7 @@ public partial class BinarySpacePartiationGenerator : RoomGenerator
 	private void PlaceRoom(RectangleRoom targetDivision, TileType tileType)
 	{
 		Grid.MoveTo(targetDivision.TopLeft);
-		Grid.DrawRect(targetDivision.Size, tileType);
+		Grid.FillRect(targetDivision.Size, tileType);
 		Rooms.Add(targetDivision);
 	}
 
