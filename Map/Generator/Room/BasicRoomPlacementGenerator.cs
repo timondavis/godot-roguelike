@@ -21,6 +21,10 @@ public partial class BasicRoomPlacementGenerator : RoomGenerator
 		GenerateGrid();
 	}
 
+	/// <summary>
+	/// Generates a grid for room generation.
+	/// </summary>
+	/// <exception cref="ArgumentException">Thrown when the maximum room size is less than the minimum room size or when the maximum room count is less than the minimum room count.</exception>
 	public override void GenerateGrid()
 	{
 		if (RoomSizeMax < RoomSizeMin)
@@ -63,7 +67,7 @@ public partial class BasicRoomPlacementGenerator : RoomGenerator
 			}
 		} 
 	}
-	
+
 	private bool PlaceRoom()
 	{
 		int roomWidth = GD.RandRange(RoomSizeMin, RoomSizeMax);

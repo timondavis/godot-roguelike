@@ -49,6 +49,10 @@ public abstract partial class RoomGenerator : MapGenerator
 		Generate();
 	}
 
+	/// <summary>
+	/// Generates the map by randomly determining the number of rooms, placing the rooms on the map,
+	/// connecting the rooms, and emitting the signal to mark map finalization.
+	/// </summary>
 	protected async void Generate()
 	{
 		NumberOfRooms = GD.RandRange(RoomCountMin, RoomCountMax);
@@ -57,8 +61,16 @@ public abstract partial class RoomGenerator : MapGenerator
 		EmitSignal(SignalName.MapFinalized);	
 	}
 
+	/// <summary>
+	/// Places the rooms in a specified location.
+	/// </summary>
+	/// <returns>A task representing the asynchronous operation.</returns>
 	protected abstract Task PlaceRooms();
 
+	/// <summary>
+	/// Connects the rooms by finding a path between them and connecting each pair of adjacent rooms.
+	/// </summary>
+	/// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
 	protected virtual async Task ConnectRooms()
 	{
 		PathFinder pf = new PathFinder(Grid, TileTypes.FindByName(TileType_Floor));
@@ -78,11 +90,23 @@ public abstract partial class RoomGenerator : MapGenerator
 		}
 	}
 
+	/// <summary>
+	/// Checks if a room is available.
+	/// </summary>
+	/// <param name="room">The room to check availability for.</param>
+	/// <returns>True if the room is available; otherwise, false.</returns>
+	/// <exception cref="NotImplementedException">The method is not implemented.</exception>
 	protected bool IsRoomAvailable(Model.Room room)
 	{
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// Checks if a given room is available
+	/// (ie it doesn't intersect with another existing active cell pattern) on the grid.
+	/// </summary>
+	/// <param name="room">The room to check availability for.</param>
+	/// <returns>True if the room is available, false otherwise.</returns>
 	protected bool IsRoomAvailable(RectangleRoom room)
 	{
 		Vector2I placeholder = new Vector2I(Grid.Current.Position.X, Grid.Current.Position.Y);
@@ -107,6 +131,11 @@ public abstract partial class RoomGenerator : MapGenerator
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// Checks if a given room is isolated, meaning it is surrounded by inactive grid cells in all cardinal directions.
+	/// </summary>
+	/// <param name="room">The room to check.</param>
+	/// <returns>Returns true if the room is isolated, otherwise false.</returns>
 	protected bool IsRoomIsolated(RectangleRoom room)
 	{
 		if (!IsRoomAvailable(room))
@@ -162,5 +191,4 @@ public abstract partial class RoomGenerator : MapGenerator
 
 		return true;
 	}
-
 }

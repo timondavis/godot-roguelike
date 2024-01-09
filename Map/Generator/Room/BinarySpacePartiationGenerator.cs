@@ -13,66 +13,46 @@ public partial class BinarySpacePartiationGenerator : RoomGenerator
 		base._Ready();
 		GenerateGrid();
 	}
-	
+
+	/// <summary>
+	/// Places rooms on the map.
+	/// </summary>
+	/// <returns>A task representing the asynchronous operation.</returns>
 	protected override async Task PlaceRooms()
 	{
-		// Calculate Depth of BSP Algorithm such that it should faciltiate the chosen number of rooms.
-		double preciseBinaryDepth = Math.Log2(NumberOfRooms);
-		int minBinaryDepth = (int) Math.Ceiling(preciseBinaryDepth);
-		
+		// Tile Type to draw (floor)
 		TileType floorTileType = TileTypes.FindByName(TileType_Floor);
-		RectangleRoom[] divisions;
+		
+		// Create Rectangle Room encapsulating entire map.  This will be subdivided to create rooms below.
 		RectangleRoom entireGrid = new RectangleRoom();
 		RectangleRoom targetDivision;
 		entireGrid.TopLeft = new Vector2I(0, 0);
 		entireGrid.Size = new Vector2I(Grid.Size.X - 1, Grid.Size.Y - 1);
-
-		GD.Randomize();
+		
+		// Local variable storage
 		bool isRoomAvailable;
 		int attempts;
+		
+		// Scramble the randomizer.
+		GD.Randomize();
 
+		// Invoke subdivision for each room
 		for (int roomCounter = 0; roomCounter < NumberOfRooms; roomCounter++)
 		{
 			attempts = 0;
-			targetDivision = entireGrid;
 			do
 			{
-				int targetDepth = GD.RandRange(minBinaryDepth, minBinaryDepth + 3);
-				int divisionSelection;
-				for (int currentDepth = 0; currentDepth < (targetDepth); currentDepth++)
-				{
-					divisions = (currentDepth % 2 == 0) ? _SubdivideY(targetDivision) : _SubdivideX(targetDivision);
-					
-					divisionSelection = GD.RandRange(0, 1);
-					targetDivision = divisions[divisionSelection];
-
-					// Don't create rooms that are smaller than 3 wide or 3 high.
-					if (
-						(targetDivision.Size.X * 0.5) <= 3.0 ||
-						(targetDivision.Size.Y * 0.5) <= 3.0
-					)
-					{
-						break;
-					}
-				}
-
+				targetDivision = GenerateRoomDivision(entireGrid);
 				isRoomAvailable = IsRoomIsolated(targetDivision);
 
 				if (isRoomAvailable)
 				{
-					Grid.MoveTo(targetDivision.TopLeft);
-					Grid.DrawRect(targetDivision.Size, floorTileType);
-					Rooms.Add(targetDivision);
-					if (CycleEmissionDelay > 0)
-					{
-						await ToSignal(GetTree().CreateTimer(CycleEmissionDelay), SceneTreeTimer.SignalName.Timeout);
-						EmitSignal(SignalName.MapUpdated, Grid);
-					}
+					PlaceRoom(targetDivision, floorTileType);
+					await EmitUpdate();
 				}
 				else
 				{
 					attempts++;
-					targetDivision = entireGrid;
 				}
 				
 			} while (attempts < RoomApplicationAttemptsMax && !isRoomAvailable);
@@ -103,5 +83,53 @@ public partial class BinarySpacePartiationGenerator : RoomGenerator
 		return divisions;
 	}
 
+	private RectangleRoom GenerateRoomDivision(RectangleRoom baseArea)
+	{
+		// Calculate Depth of BSP Algorithm so that it can faciltiate the chosen number of rooms.
+		double preciseBinaryDepth = Math.Log2(NumberOfRooms);
+		int minBinaryDepth = (int) Math.Ceiling(preciseBinaryDepth);	
+		
+		// Randomize a bit to come up with target depth.
+		int targetDepth = GD.RandRange(minBinaryDepth, minBinaryDepth + 3);
+		
+		// Storage for algorithm data and results
+		RectangleRoom[] divisions;
+		RectangleRoom targetDivision = baseArea;
+		int divisionSelection;
+		
+		for (int currentDepth = 0; currentDepth < (targetDepth); currentDepth++)
+		{
+			divisions = (currentDepth % 2 == 0) ? _SubdivideY(targetDivision) : _SubdivideX(targetDivision);
+					
+			divisionSelection = GD.RandRange(0, 1);
+			targetDivision = divisions[divisionSelection];
 
+			// Don't create rooms that are smaller than 3 wide or 3 high.
+			if (
+				(targetDivision.Size.X * 0.5) <= 3.0 ||
+				(targetDivision.Size.Y * 0.5) <= 3.0
+			)
+			{
+				break;
+			}
+		}
+
+		return targetDivision;
+	}
+
+	private void PlaceRoom(RectangleRoom targetDivision, TileType tileType)
+	{
+		Grid.MoveTo(targetDivision.TopLeft);
+		Grid.DrawRect(targetDivision.Size, tileType);
+		Rooms.Add(targetDivision);
+	}
+
+	private async Task EmitUpdate()
+	{
+		if (CycleEmissionDelay > 0)
+		{
+			await ToSignal(GetTree().CreateTimer(CycleEmissionDelay), SceneTreeTimer.SignalName.Timeout);
+			EmitSignal(SignalName.MapUpdated, Grid);
+		}		
+	}
 }

@@ -27,7 +27,7 @@ public partial class RectangleRoom : Room
 		{
 			_size = value;
 			_isSizeSet = true;
-			_SetCenter();
+			SetCenter();
 		}
 	}
 
@@ -52,12 +52,12 @@ public partial class RectangleRoom : Room
 		{
 			_topLeft = value;
 			_isTopLeftSet = true;
-			_SetCenter();
+			SetCenter();
 		}
 	}
 
 
-	private void _SetCenter()
+	private void SetCenter()
 	{
 		if (IsSizeSet && IsTopLeftSet)
 		{

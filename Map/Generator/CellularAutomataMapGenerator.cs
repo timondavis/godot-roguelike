@@ -37,6 +37,9 @@ public partial class CellularAutomataMapGenerator : Roguelike.Map.Generator.MapG
 		GenerateGrid();
 	}
 
+	/// <summary>
+	/// Generates a grid for the map.
+	/// </summary>
 	public override void GenerateGrid()
 	{
 		InitializeGrid();

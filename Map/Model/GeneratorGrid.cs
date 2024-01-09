@@ -88,12 +88,21 @@ public partial class GeneratorGrid : GodotObject
 		return newPosition;
 	}
 
+	/// <summary>
+	/// Moves the `Current` GridCell pointer to the specified target position.
+	/// </summary>
+	/// <param name="target">The target position.</param>
 	public void MoveTo(Vector2I target)
 	{
 		var safeTarget = SafePosition(target);
 		Current = GridCells[safeTarget.X, safeTarget.Y];
 	}
 
+	/// <summary>
+	/// Draws a line from the current position to the specified target position, activating tiles along the way.
+	/// </summary>
+	/// <param name="target">The destination position to draw the line to.</param>
+	/// <param name="tileType">The type of tile to activate along the line.</param>
 	public void LineTo(Vector2I target, TileType tileType)
 	{
 		var start = new Vector2I(Current.Position.X, Current.Position.Y);
@@ -118,6 +127,11 @@ public partial class GeneratorGrid : GodotObject
 		}
 	}
 
+	/// <summary>
+	/// Draws a rectangular shape using the provided dimensions and tile type.
+	/// </summary>
+	/// <param name="dimensions">The dimensions (width and height) of the rectangle.</param>
+	/// <param name="tileType">The type of tile to use when drawing the rectangle.</param>
 	public void DrawRect(Vector2I dimensions, TileType tileType)
 	{
 		Vector2I topLeft = new Vector2I(Current.Position.X, Current.Position.Y);
@@ -126,7 +140,12 @@ public partial class GeneratorGrid : GodotObject
 		LineTo(new Vector2I( topLeft.X + dimensions.X, topLeft.Y), tileType);
 		LineTo(new Vector2I(topLeft.X, topLeft.Y), tileType);
 	}
-	
+
+	/// <summary>
+	/// Fills a rectangular area with a specified tile type.
+	/// </summary>
+	/// <param name="dimensions">The dimensions of the rectangle to be filled.</param>
+	/// <param name="tileType">The type of tile to fill the rectangle with.</param>
 	public void FillRect(Vector2I dimensions, TileType tileType)
 	{
 		Vector2I topLeft = new Vector2I(Current.Position.X, Current.Position.Y);
