@@ -7,7 +7,7 @@
 [node name="Main" type="Node"]
 
 [node name="TileMap" type="TileMap" parent="."]
-scale = Vector2(0.2, 0.2)
+scale = Vector2(0.05, 0.05)
 format = 2
 
 [node name="Map Builder" type="Node" parent="." node_paths=PackedStringArray("ActiveTileMap", "ActiveMapGenerator")]
@@ -19,9 +19,9 @@ TileAssociationsPath = "res://Asset/TileTypeAssociation/simple-tile-association.
 
 [node name="Map Generator" type="Node" parent="."]
 script = ExtResource("3_ii3bk")
-RoomSizeMax = 7
-RoomCountMin = 7
-RoomCountMax = 10
+RoomSizeMax = 25
+RoomCountMin = 12
+RoomCountMax = 30
 CycleEmissionDelay = 1.0
-Width = 40
-Height = 40
+Width = 100
+Height = 100

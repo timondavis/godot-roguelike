@@ -1,9 +1,21 @@
 using Godot;
 using System;
 using System.Windows.Markup;
+using Roguelike.Map.Model;
 
 public partial class RectangleRoom : Room
 {
+	
+	private bool _isSizeSet = false;
+
+	public bool IsSizeSet
+	{
+		get
+		{
+			return _isSizeSet;
+		}
+	}
+
 	private Vector2I _size;
 	public Vector2I Size
 	{
@@ -14,10 +26,20 @@ public partial class RectangleRoom : Room
 		set
 		{
 			_size = value;
+			_isSizeSet = true;
 			_SetCenter();
 		}
 	}
 
+	private bool _isTopLeftSet = false;
+
+	public bool IsTopLeftSet
+	{
+		get
+		{
+			return _isTopLeftSet;
+		}
+	}
 	private Vector2I _topLeft;
 
 	public Vector2I TopLeft
@@ -29,17 +51,16 @@ public partial class RectangleRoom : Room
 		set
 		{
 			_topLeft = value;
+			_isTopLeftSet = true;
 			_SetCenter();
 		}
 	}
 
-	public RectangleRoom() : base() {}
 
 	private void _SetCenter()
 	{
-		if (Size != default && TopLeft != default)
+		if (IsSizeSet && IsTopLeftSet)
 		{
-
 			double halfWidth = Size.X * 0.5;
 			double halfHeight = Size.Y * 0.5;
 			
@@ -53,4 +74,6 @@ public partial class RectangleRoom : Room
 			Center = default;
 		}
 	}
+	
+	public RectangleRoom() : base() {}
 }

@@ -78,11 +78,17 @@ public abstract partial class RoomGenerator : MapGenerator
 		}
 	}
 
-	protected virtual bool IsRoomAvailable(int startX, int startY, int roomWidth, int roomHeight)
+	protected bool IsRoomAvailable(Model.Room room)
 	{
-		for (int x = startX; x < startX + roomWidth; x++)
+		throw new NotImplementedException();
+	}
+
+	protected bool IsRoomAvailable(RectangleRoom room)
+	{
+		Vector2I placeholder = new Vector2I(Grid.Current.Position.X, Grid.Current.Position.Y);
+		for (int x = room.TopLeft.X; x < room.TopLeft.X + room.Size.X; x++)
 		{
-			for (int y = startY; y < startY + roomHeight; y++)
+			for (int y = room.TopLeft.Y; y < room.TopLeft.Y + room.Size.Y; y++)
 			{
 				Grid.MoveTo(new Vector2I(x,y));
 				if (Grid.Current.IsActive)
@@ -92,6 +98,69 @@ public abstract partial class RoomGenerator : MapGenerator
 			}
 		}
 
+		Grid.MoveTo(placeholder);
 		return true;
 	}
+
+	protected bool IsRoomIsolated(Model.Room room)
+	{
+		throw new NotImplementedException();
+	}
+
+	protected bool IsRoomIsolated(RectangleRoom room)
+	{
+		if (!IsRoomAvailable(room))
+		{
+			return false;
+		}
+
+		Vector2I placeholder = new Vector2I(Grid.Current.Position.X, Grid.Current.Position.Y);
+
+		HashSet<GeneratorGrid.Direction> eastWest = new HashSet<GeneratorGrid.Direction>();
+		HashSet<GeneratorGrid.Direction> northSouth = new HashSet<GeneratorGrid.Direction>();
+		GridCell result;
+
+		// Check values along x axis at y intersections.
+		for (int x = room.TopLeft.X; x < room.TopLeft.X + room.Size.X; x++)
+		{
+			Grid.MoveTo(new Vector2I(x, room.TopLeft.Y));
+			result = Grid.RelativeQuery(GeneratorGrid.Direction.North);
+			if (result != null && result.IsActive)
+			{
+				Grid.MoveTo(placeholder);
+				return false;
+			}
+			
+			Grid.MoveTo(new Vector2I(x, room.TopLeft.Y + room.Size.Y));
+			result = Grid.RelativeQuery(GeneratorGrid.Direction.South);
+			if (result != null && result.IsActive)
+			{
+				Grid.MoveTo(placeholder);
+				return false;
+			}
+		}
+
+		// Now check values along y axis at x intersections.
+		for (int y = room.TopLeft.Y; y < (room.TopLeft.Y + room.Size.Y); y++)
+		{
+			Grid.MoveTo(new Vector2I(room.TopLeft.X, y));
+			result = Grid.RelativeQuery(GeneratorGrid.Direction.West);
+			if (result != null && result.IsActive)
+			{
+				Grid.MoveTo(placeholder);
+				return false;
+			}
+		    
+		    Grid.MoveTo(new Vector2I(room.TopLeft.X + room.Size.X, y));
+		    result = Grid.RelativeQuery(GeneratorGrid.Direction.East);
+		    if ( result != null && result.IsActive )
+			{
+				Grid.MoveTo(placeholder);
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 }

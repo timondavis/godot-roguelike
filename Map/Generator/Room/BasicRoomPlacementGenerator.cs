@@ -1,8 +1,9 @@
 using System;
 using System.Threading.Tasks;
 using Godot;
-using Roguelike.Map.Generator.Room;
 using Roguelike.Map.Model;
+
+namespace Roguelike.Map.Generator.Room;
 
 public partial class BasicRoomPlacementGenerator : RoomGenerator
 {
@@ -70,20 +71,21 @@ public partial class BasicRoomPlacementGenerator : RoomGenerator
 		int startX = GD.RandRange(0, Width - roomWidth);
 		int startY = GD.RandRange(0, Height - roomHeight);
 		TileType floorTileType = TileTypes.FindByName(TileType_Floor);
+		
+		double centerX = (double)(startX) + (double)(roomWidth / 2.0);
+		double centerY = (double)(startY) + (double)(roomHeight / 2.0);
+		RectangleRoom room  = new RectangleRoom
+		{
+			Center = new Vector2I( (int) Math.Floor( centerX ), (int) Math.Floor( centerY ) ),
+			TopLeft = new Vector2I(startX, startY),
+			Size = new Vector2I(roomWidth, roomHeight)
+		};
 			
 		// Return false if conflict is found.
-		if (IsRoomAvailable(startX, startY, roomWidth, roomHeight))
+		if (IsRoomIsolated(room))
 		{
-			double centerX = (double)(startX) + (double)(roomWidth / 2.0);
-			double centerY = (double)(startY) + (double)(roomHeight / 2.0);
-			RectangleRoom room  = new RectangleRoom
-			{
-				Center = new Vector2I( (int) Math.Floor( centerX ), (int) Math.Floor( centerY ) ),
-				TopLeft = new Vector2I(startX, startY),
-				Size = new Vector2I(roomWidth, roomHeight)
-			};
-				
-			Grid.FillRect(room.TopLeft,room.Size, floorTileType);
+			Grid.MoveTo(room.TopLeft);
+			Grid.FillRect(room.Size, floorTileType);
 			Rooms.Add(room);
 				
 			return true;

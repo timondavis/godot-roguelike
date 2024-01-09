@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Security.AccessControl;
 using Godot;
+using Godot.NativeInterop;
 
 namespace Roguelike.Map.Model;
 
@@ -116,8 +118,18 @@ public partial class GeneratorGrid : GodotObject
 		}
 	}
 
-	public void FillRect(Vector2I topLeft, Vector2I dimensions, TileType tileType)
+	public void DrawRect(Vector2I dimensions, TileType tileType)
 	{
+		Vector2I topLeft = new Vector2I(Current.Position.X, Current.Position.Y);
+		LineTo(new Vector2I(topLeft.X, topLeft.Y + dimensions.Y), tileType);
+		LineTo(new Vector2I(topLeft.X + dimensions.X, topLeft.Y + dimensions.Y), tileType);
+		LineTo(new Vector2I( topLeft.X + dimensions.X, topLeft.Y), tileType);
+		LineTo(new Vector2I(topLeft.X, topLeft.Y), tileType);
+	}
+	
+	public void FillRect(Vector2I dimensions, TileType tileType)
+	{
+		Vector2I topLeft = new Vector2I(Current.Position.X, Current.Position.Y);
 		for (int x = topLeft.X; x < topLeft.X + dimensions.X ; x++)
 		{
 			for (int y = topLeft.Y; y < topLeft.Y + dimensions.Y; y++)
@@ -200,7 +212,7 @@ public partial class GeneratorGrid : GodotObject
 
 		return found;
 	}
-
+	
 	private void InitializeGrid()
 	{
 		for (int x = 0; x < Size.X; x++)
