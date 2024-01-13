@@ -9,9 +9,7 @@ namespace Roguelike.Map.Generator.Room;
 public abstract partial class RoomGenerator : MapGenerator
 {
    	public const string TileType_Floor = "floor";
-    
-	[Export(PropertyHint.Range, "1,1000,1")] public int RoomCountMin { get; set; }
-	[Export(PropertyHint.Range, "1,1000,1")] public int RoomCountMax { get; set; }
+
 	
 	[Export] public float CycleEmissionDelay { get; set; }
 
@@ -23,27 +21,9 @@ public abstract partial class RoomGenerator : MapGenerator
 	{
 		TileTypes.Add(new TileType { Name=TileType_Floor } );
 	}
-	
-	// Called when the node enters the scene tree for the first time.
-	public override void _Ready()
-	{
-		base._Ready();
-		RoomCountMin = Math.Max(1, RoomCountMin);
-		RoomCountMax = Math.Max(1, RoomCountMax);
-	}
-
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void _Process(double delta)
-	{
-	}
 
 	public override void GenerateGrid()
 	{
-		if (RoomCountMax < RoomCountMin)
-		{
-			throw new ArgumentException("RoomCountMax cannot be less than RoomCountMin");
-		}
-		
 		InitializeGrid();
 		GD.Randomize();
 		Generate();
@@ -55,10 +35,9 @@ public abstract partial class RoomGenerator : MapGenerator
 	/// </summary>
 	protected async void Generate()
 	{
-		NumberOfRooms = GD.RandRange(RoomCountMin, RoomCountMax);
 		await PlaceRooms();
 		await ConnectRooms();
-		EmitSignal(SignalName.MapFinalized);	
+		EmitSignal(SignalName.MapFinalized, Grid);	
 	}
 
 	/// <summary>

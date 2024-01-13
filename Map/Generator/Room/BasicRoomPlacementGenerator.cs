@@ -6,18 +6,21 @@ using Roguelike.Map.Model;
 namespace Roguelike.Map.Generator.Room;
 
 public partial class BasicRoomPlacementGenerator : RoomGenerator
-{
-	[Export(PropertyHint.Range, "3,1000,1")] 
-	public int RoomSizeMin { get; set; }
 
-	[Export(PropertyHint.Range, "3,1000,1")]
-	public int RoomSizeMax { get; set; }
+{
+	[Export(PropertyHint.Range, "1,1000,1")] public int RoomCountMin { get; set; }
+	[Export(PropertyHint.Range, "1,1000,1")] public int RoomCountMax { get; set; }
+	
+	[Export(PropertyHint.Range, "3,1000,1")] public int RoomSizeMin { get; set; } 
+	[Export(PropertyHint.Range, "3,1000,1")] public int RoomSizeMax { get; set; }
 
 	public override void _Ready()
 	{
 		base._Ready();
 		RoomSizeMin = Math.Max(3, RoomSizeMin);
 		RoomSizeMax = Math.Max(3, RoomSizeMax);
+		RoomCountMin = Math.Max(1, RoomCountMin);
+		RoomCountMax = Math.Max(1, RoomCountMax);
 		GenerateGrid();
 	}
 
@@ -44,6 +47,7 @@ public partial class BasicRoomPlacementGenerator : RoomGenerator
 
 	protected override async Task PlaceRooms()
 	{
+		NumberOfRooms = GD.RandRange(RoomCountMin, RoomCountMax);
 		int currentRoomCounter = 0;
 		int attemptsForCurrentRoom = 0;
 		bool isRoomPlaced;
