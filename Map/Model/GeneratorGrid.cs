@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Security.AccessControl;
 using Godot;
+using Godot.NativeInterop;
 
 namespace Roguelike.Map.Model;
 
@@ -86,10 +88,96 @@ public partial class GeneratorGrid : GodotObject
 		return newPosition;
 	}
 
+	/// <summary>
+	/// Moves the `Current` GridCell pointer to the specified target position.
+	/// </summary>
+	/// <param name="target">The target position.</param>
 	public void MoveTo(Vector2I target)
 	{
 		var safeTarget = SafePosition(target);
 		Current = GridCells[safeTarget.X, safeTarget.Y];
+	}
+
+	/// <summary>
+	/// Draws a line from the current position to the specified target position, activating tiles along the way.
+	/// </summary>
+	/// <param name="target">The destination position to draw the line to.</param>
+	/// <param name="tileType">The type of tile to activate along the line.</param>
+	/// <param name="safeMode">When not in safe mode, lines to invalid posistion will be cancelled.
+	/// Safe mode will get as close as it can.</param>
+	public void LineTo(Vector2I target, TileType tileType, bool safeMode = false)
+	{
+		var start = new Vector2I(Current.Position.X, Current.Position.Y);
+		Vector2I confirmedTarget;
+		if (safeMode)
+		{
+			confirmedTarget = SafePosition(target);
+		}
+		else
+		{
+			confirmedTarget = target;
+		}
+		if (IsPositionSafe(confirmedTarget))
+		{
+			Vector2I nextPosition = new Vector2I(start.X, start.Y);
+			while (Current.Position != confirmedTarget)
+			{
+				if (!Current.IsActive)
+				{
+					Current.Activate(tileType);
+				}
+
+				int xMultiplier = (start.X).CompareTo(confirmedTarget.X) * -1;
+				int yMultiplier = (start.Y).CompareTo(confirmedTarget.Y) * -1;
+
+				nextPosition.X += (1 * xMultiplier);
+				nextPosition.Y += (1 * yMultiplier);
+			
+				MoveTo(nextPosition);
+			}
+		}
+	}
+
+	/// <summary>
+	/// Draws a rectangular shape using the provided dimensions and tile type.
+	/// </summary>
+	/// <param name="dimensions">The dimensions (width and height) of the rectangle.</param>
+	/// <param name="tileType">The type of tile to use when drawing the rectangle.</param>
+	/// <param name="tileType">If safe mode is turned on, system will get close as
+	/// possible to invalid targets.  Otherwise, invalid targets are ignored.</param>
+	public void DrawRect(Vector2I dimensions, TileType tileType, bool safeMode = false)
+	{
+		Vector2I topLeft = new Vector2I(Current.Position.X, Current.Position.Y);
+		LineTo(new Vector2I(topLeft.X, topLeft.Y + (dimensions.Y -1)), tileType, safeMode);
+		LineTo(new Vector2I(topLeft.X + (dimensions.X - 1), topLeft.Y + (dimensions.Y - 1)), tileType, safeMode);
+		LineTo(new Vector2I( topLeft.X + (dimensions.X - 1), topLeft.Y), tileType, safeMode);
+		LineTo(new Vector2I(topLeft.X, topLeft.Y), tileType, safeMode);
+	}
+
+	/// <summary>
+	/// Fills a rectangular area with a specified tile type.
+	/// </summary>
+	/// <param name="dimensions">The dimensions of the rectangle to be filled.</param>
+	/// <param name="tileType">The type of tile to fill the rectangle with.</param>
+	/// <param name="safeMode">If safe mode is turned on, system will get close as possible to invalid targets.  Otherwise, invalid targets are ignored.</param>
+	public void FillRect(Vector2I dimensions, TileType tileType, bool safeMode = false)
+	{
+		Vector2I topLeft = new Vector2I(Current.Position.X, Current.Position.Y);
+		for (int x = topLeft.X; x < topLeft.X + dimensions.X ; x++)
+		{
+			for (int y = topLeft.Y; y < topLeft.Y + dimensions.Y; y++)
+			{
+				if (safeMode)
+				{
+					MoveTo(SafePosition(new Vector2I(x, y)));
+				}
+				else
+				{
+					MoveTo(new Vector2I(x,y));
+				}
+				Current.Activate(tileType);	
+			}
+		}	
 	}
 
 	/// <summary>
@@ -164,7 +252,7 @@ public partial class GeneratorGrid : GodotObject
 
 		return found;
 	}
-
+	
 	private void InitializeGrid()
 	{
 		for (int x = 0; x < Size.X; x++)
