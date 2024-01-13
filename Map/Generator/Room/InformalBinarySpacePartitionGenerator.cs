@@ -5,13 +5,29 @@ using Roguelike.Map.Model;
 
 namespace Roguelike.Map.Generator.Room;
 
-public partial class BinarySpacePartiationGenerator : RoomGenerator
+public partial class InformalBinarySpacePartitionGenerator : RoomGenerator
 {
+	[Export(PropertyHint.Range, "1,1000,1")] public int RoomCountMin { get; set; }
+	[Export(PropertyHint.Range, "1,1000,1")] public int RoomCountMax { get; set; }
 	
 	public override void _Ready()
 	{
 		base._Ready();
+		RoomCountMin = Math.Max(1, RoomCountMin);
+		RoomCountMax = Math.Max(1, RoomCountMax);
 		GenerateGrid();
+	}
+
+	public override void GenerateGrid()
+	{
+		if (RoomCountMax < RoomCountMin)
+		{
+			throw new ArgumentException("RoomCountMax cannot be less than RoomCountMin");
+		}
+		
+		InitializeGrid();
+		GD.Randomize();
+		Generate();
 	}
 
 	/// <summary>
@@ -22,6 +38,9 @@ public partial class BinarySpacePartiationGenerator : RoomGenerator
 	{
 		// Tile Type to draw (floor)
 		TileType floorTileType = TileTypes.FindByName(TileType_Floor);
+		
+		// Determine Number of Rooms
+		NumberOfRooms = GD.RandRange(RoomCountMin, RoomCountMax);
 		
 		// Create Rectangle Room encapsulating entire map.  This will be subdivided to create rooms below.
 		RectangleRoom entireGrid = new RectangleRoom();
