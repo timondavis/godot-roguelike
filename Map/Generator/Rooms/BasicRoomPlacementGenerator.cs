@@ -82,15 +82,10 @@ public partial class BasicRoomPlacementGenerator : RoomGenerator
 		
 		double centerX = (double)(startX) + (double)(roomWidth / 2.0);
 		double centerY = (double)(startY) + (double)(roomHeight / 2.0);
-		Room<Rectangle> room = new Room<Rectangle>
-		{
-			Shape = new Rectangle
-			{
-				Center = new Vector2I( (int) Math.Floor( centerX ), (int) Math.Floor( centerY ) ),
-				TopLeft = new Vector2I(startX, startY),
-				Size = new Vector2I(roomWidth, roomHeight)
-			}
-		};
+		Room<Rectangle> room = RoomService.Instance.GenerateRoom<Rectangle>();
+		room.Shape.Center = new Vector2I( (int) Math.Floor( centerX ), (int) Math.Floor( centerY ) );
+		room.Shape.TopLeft = new Vector2I(startX, startY);
+		room.Shape.Size = new Vector2I(roomWidth, roomHeight); 
 			
 		// Return false if conflict is found.
 		if (RoomService.Instance.IsRoomAreaIsolated(room, Grid))

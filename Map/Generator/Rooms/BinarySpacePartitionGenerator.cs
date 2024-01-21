@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Godot;
 using Roguelike.Map.Generator.Path;
+using Roguelike.Map.Generator.Service;
 using Roguelike.Map.Model;
 using Roguelike.Map.Model.Shapes;
 
@@ -66,7 +67,7 @@ public partial class BinarySpacePartitionGenerator : RoomGenerator
 		);
 		for (int divIdx = 0; divIdx < AxisDivisions; divIdx++)
 		{
-			divisions[divIdx] = new Room<Rectangle>();
+			divisions[divIdx] = RoomService.Instance.GenerateRoom<Rectangle>();
 			divisions[divIdx].Shape.TopLeft = new Vector2I(
 				node.Room.Shape.TopLeft.X + (divIdx * (int) Math.Ceiling(node.Room.Shape.Size.X / (double) AxisDivisions)),
 				node.Room.Shape.TopLeft.Y
@@ -97,7 +98,7 @@ public partial class BinarySpacePartitionGenerator : RoomGenerator
 		);
 		for (int divIdx = 0; divIdx < AxisDivisions; divIdx++)
 		{
-			divisions[divIdx] = new Room<Rectangle>();
+			divisions[divIdx] = RoomService.Instance.GenerateRoom<Rectangle>();
 			divisions[divIdx].Shape.TopLeft = new Vector2I(
 				node.Room.Shape.TopLeft.X,
 				node.Room.Shape.TopLeft.Y + (divIdx * (int) Math.Ceiling(node.Room.Shape.Size.Y / (double) AxisDivisions))
@@ -147,7 +148,7 @@ public partial class BinarySpacePartitionGenerator : RoomGenerator
 				GD.RandRange(0, node.Room.Shape.Size.Y - roomDimensions.Y)
 			);
 
-			Room<Rectangle> revisedRoom = new Room<Rectangle>();
+			Room<Rectangle> revisedRoom = RoomService.Instance.GenerateRoom<Rectangle>();
 			revisedRoom.Shape.Size = roomDimensions;
 			revisedRoom.Shape.TopLeft = new Vector2I(
 				node.Room.Shape.TopLeft.X + roomOffset.X,
@@ -170,7 +171,7 @@ public partial class BinarySpacePartitionGenerator : RoomGenerator
 
 	private RoomTree<Rectangle> InitializeTree()
 	{
-		Room<Rectangle> entireRoom = new Room<Rectangle>();
+		Room<Rectangle> entireRoom = RoomService.Instance.GenerateRoom<Rectangle>();
 		entireRoom.Shape.TopLeft = new Vector2I(0, 0);
 		entireRoom.Shape.Size = new Vector2I(
 			Grid.Size.X,

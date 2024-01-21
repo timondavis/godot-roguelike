@@ -66,8 +66,6 @@ public partial class Rectangle : Shape
 			point.Y < TopLeft.Y + Size.Y
 		);
 	}
-	
-	
 
 	public bool IsSizeSet
 	{

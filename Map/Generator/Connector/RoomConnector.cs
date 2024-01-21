@@ -13,7 +13,7 @@ public partial class RoomConnector : GodotObject
         TileType = type;
     }
     
-    public void ConnectRooms<TRoomShape>(Room<TRoomShape> roomA, Room<TRoomShape> roomB) where TRoomShape : Shape, new()
+    public void ConnectRooms<TRoomShape>(Room<TRoomShape> roomA, Room<TRoomShape> roomB) where TRoomShape : Shape
     {
        // Draw an imaginary line between the center of both squares 
        Vector2I start = roomA.Shape.Center;

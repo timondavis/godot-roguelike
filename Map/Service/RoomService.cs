@@ -7,7 +7,7 @@ namespace Roguelike.Map.Generator.Service;
 public class RoomService
 {
     private static RoomService _instance;
-
+    
     public static RoomService Instance
     {
         get
@@ -25,7 +25,7 @@ public class RoomService
     {
     }
 
-    public bool IsRoomAreaVacant<TRoomShape>(Room<TRoomShape> room, GeneratorGrid grid) where TRoomShape : Shape, new()
+    public bool IsRoomAreaVacant<TRoomShape>(Room<TRoomShape> room, GeneratorGrid grid) where TRoomShape : Shape
     {
         Vector2I placeholder = new Vector2I(grid.Current.Position.X, grid.Current.Position.Y);
         bool isRoomAvailable = true;
@@ -50,8 +50,14 @@ public class RoomService
         room.Shape.EachCoordinateInArea -= OnEachCoordinateInArea;
         return isRoomAvailable;
     }
+    
+    public Room<TRoomShape> GenerateRoom<TRoomShape>() where TRoomShape : Shape, new ()
+    {
+        Room<TRoomShape> room = new Room<TRoomShape>(new TRoomShape());
+        return room;
+    }
 
-    public bool IsRoomAreaIsolated<TRoomShape>(Room<TRoomShape> room, GeneratorGrid grid) where TRoomShape : Shape, new()
+    public bool IsRoomAreaIsolated<TRoomShape>(Room<TRoomShape> room, GeneratorGrid grid) where TRoomShape : Shape
     {
         Vector2I placeholder = new Vector2I(grid.Current.Position.X, grid.Current.Position.Y);
         bool isRoomIsolated = true;

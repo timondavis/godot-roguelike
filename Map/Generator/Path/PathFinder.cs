@@ -24,6 +24,5 @@ public partial class PathFinder : GodotObject
             .ToList();
 
         return new Queue<Room<Rectangle>>(orderedRooms);
-
     }
 }
