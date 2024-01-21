@@ -22,9 +22,8 @@ public abstract partial class RoomGenerator : MapGenerator
 		TileTypes.Add(new TileType { Name=TileType_Floor } );
 	}
 
-	public override void GenerateGrid()
+	public override void Begin()
 	{
-		InitializeGrid();
 		GD.Randomize();
 		Generate();
 	}

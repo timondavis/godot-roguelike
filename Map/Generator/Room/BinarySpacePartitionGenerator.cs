@@ -21,12 +21,10 @@ public partial class BinarySpacePartitionGenerator : RoomGenerator
 		DivisionDepth = Math.Max(1, DivisionDepth);
 		MinConnectionsPerRoom = Math.Max(1, MinConnectionsPerRoom);
 		MaxConnectionsPerRoom = Math.Max(1, MaxConnectionsPerRoom);
-		GenerateGrid();
 	}
 	
-	public override void GenerateGrid()
+	public override void Begin()
 	{
-		InitializeGrid();
 		GD.Randomize();
 		Generate();
 	}

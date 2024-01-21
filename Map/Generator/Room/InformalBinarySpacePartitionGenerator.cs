@@ -15,17 +15,15 @@ public partial class InformalBinarySpacePartitionGenerator : RoomGenerator
 		base._Ready();
 		RoomCountMin = Math.Max(1, RoomCountMin);
 		RoomCountMax = Math.Max(1, RoomCountMax);
-		GenerateGrid();
 	}
 
-	public override void GenerateGrid()
+	public override void Begin()
 	{
 		if (RoomCountMax < RoomCountMin)
 		{
 			throw new ArgumentException("RoomCountMax cannot be less than RoomCountMin");
 		}
 		
-		InitializeGrid();
 		GD.Randomize();
 		Generate();
 	}

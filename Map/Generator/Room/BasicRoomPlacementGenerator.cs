@@ -21,14 +21,13 @@ public partial class BasicRoomPlacementGenerator : RoomGenerator
 		RoomSizeMax = Math.Max(3, RoomSizeMax);
 		RoomCountMin = Math.Max(1, RoomCountMin);
 		RoomCountMax = Math.Max(1, RoomCountMax);
-		GenerateGrid();
 	}
 
 	/// <summary>
 	/// Generates a grid for room generation.
 	/// </summary>
 	/// <exception cref="ArgumentException">Thrown when the maximum room size is less than the minimum room size or when the maximum room count is less than the minimum room count.</exception>
-	public override void GenerateGrid()
+	public override void Begin()
 	{
 		if (RoomSizeMax < RoomSizeMin)
 		{
@@ -40,7 +39,6 @@ public partial class BasicRoomPlacementGenerator : RoomGenerator
 			throw new ArgumentException("RoomCountMax cannot be less than RoomCountMin");
 		}
 		
-		InitializeGrid();
 		GD.Randomize();
 		Generate();
 	}
