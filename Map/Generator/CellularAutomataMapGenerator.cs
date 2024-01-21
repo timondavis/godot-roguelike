@@ -31,18 +31,12 @@ public partial class CellularAutomataMapGenerator : Roguelike.Map.Generator.MapG
 		TileTypes.Add(new Model.TileType { Name=TileType_Floor } );
 	}
 
-	public override void _Ready()
-	{
-		base._Ready();
-		GenerateGrid();
-	}
 
 	/// <summary>
 	/// Generates a grid for the map.
 	/// </summary>
-	public override void GenerateGrid()
+	public override void Begin()
 	{
-		InitializeGrid();
 		var numberOfStartPoints = HowManyStartPoints();
 		GenerateStartPoints(numberOfStartPoints);
 		var active = Grid.QueryActiveCells();

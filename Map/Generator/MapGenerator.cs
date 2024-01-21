@@ -30,18 +30,16 @@ public abstract partial class MapGenerator : Godot.Node
 	/// Gets the width of the Map being generated.
 	/// </summary>
 	/// <remarks>
-	/// The width value represents the width dimension of the map being generated, in 'sqaures'.
+	/// The width value represents the width dimension of the map being mainpulated, in 'squares.' 
 	/// </remarks>
-	[Export]
 	public int Width { get; private set; }
 	
 	/// <summary>
 	/// Gets the height of the Map being generated.
 	/// </summary>
 	/// <remarks>
-	/// The width value represents the height dimension of the map being generated, in 'sqaures'.
+	/// The width value represents the height dimension of the map being manipulated, in 'sqaures.' 
 	/// </remarks>
-	[Export]
 	public int Height { get; private set; }
 
 	/// <summary>
@@ -49,12 +47,21 @@ public abstract partial class MapGenerator : Godot.Node
 	/// </summary>
 	public TileTypeList TileTypes { get; private set; }
 
+	private GeneratorGrid _grid;
 	/// <summary>
 	/// Represents a generator grid (the grid we'll be working with to abstract our procedural genration work).
 	/// </summary>
-	public Model.GeneratorGrid Grid;
+	public Model.GeneratorGrid Grid
+	{
+		get { return _grid; }
+		set
+		{
+			_grid = value;
+			Width = _grid.Size.X;
+			Height = _grid.Size.Y;
+		}
+	}
 
-	/// <summary
 	public MapGenerator()
 	{
 		TileTypes = new TileTypeList();
@@ -63,22 +70,5 @@ public abstract partial class MapGenerator : Godot.Node
 	/// <summary>
 	/// Generate the procedural grid.
 	/// </summary>
-	public abstract void GenerateGrid();
-
-	/// <summary>
-	/// Initializes the grid for the MapGenerator.
-	/// </summary>
-	/// <exception cref="ArgumentOutOfRangeException">Thrown if Width or Height is less than or equal to zero.</exception>
-	public void InitializeGrid()
-	{
-		if (Width > 0 && Height > 0)
-		{
-			Grid = new Model.GeneratorGrid(new Vector2I(Width, Height));
-		}
-		else
-		{
-			throw new ArgumentOutOfRangeException("Width and Height must be set before initializing " +
-												  "MapGenerator's Generator Grid.");
-		}
-	}
+	public abstract void Begin();
 }

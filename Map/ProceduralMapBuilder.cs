@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Godot;
+using Godot.Collections;
 using Roguelike.Map.Model;
 using FileAccess = Godot.FileAccess;
 
@@ -21,10 +22,13 @@ public partial class ProceduralMapBuilder : Node
 	// The TileSet from which tiles will be extracted and applied to the TileMap
 	public TileSet SourceTileSet { get; set; }
 
-	[Export] 
-	// The Map Generator Instance which is repsponsible for providing the procedural genration algorithm which
-	// will be used to build the map.
-	public Roguelike.Map.Generator.MapGenerator ActiveMapGenerator { get; set; }
+	[Export]
+	public int GeneratedMapWidth { get; set; }
+	
+	[Export]
+	public int GeneratedMapHeight { get; set; }
+
+	[Export] public Array<Roguelike.Map.Generator.MapGenerator> MapGeneratorSequence { get; set; }
 	
 	[Export(PropertyHint.File, "*.json")] 
 	// Path to JSON file which describes the relationships between the Tiles found in a TileSet
@@ -32,25 +36,46 @@ public partial class ProceduralMapBuilder : Node
 	public string TileAssociationsPath { get; set; }
 
 	/// <summary>
+	/// Represents the primary enerator grid.
+	/// </summary>
+	public GeneratorGrid Grid;
+	
+	// The Map Generator Instance which is responsible for providing the procedural genration algorithm which
+	// will be used to build the map.
+	public Roguelike.Map.Generator.MapGenerator ActiveMapGenerator { get; private set; }
+	private int _activeMapGeneratorIndex = 0;
+
+	/// <summary>
 	/// Gets the dictionary that contains the tile type assignments.
 	/// </summary>
 	/// <value>
 	/// The dictionary that contains the tile type assignments.
 	/// </value>
-	public Dictionary<Model.TileType, HashSet<TileAddress>> TileTypeAssignments { get; private set; }
+	public System.Collections.Generic.Dictionary<Model.TileType, HashSet<TileAddress>> TileTypeAssignments { get; private set; }
 	
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		// Attach callbacks to ActiveMapGenerator Delegates.
-		ActiveMapGenerator.MapGenerated += OnMapGenerated;
-		ActiveMapGenerator.MapUpdated += OnMapUpdated;
-		ActiveMapGenerator.MapFinalized += OnMapFinalized;
+		if (MapGeneratorSequence.Count == 0)
+		{
+			throw new InvalidOperationException("MapGeneratorQueue must have at least one element.");
+		}
 
-		TileTypeAssignments = new Dictionary<Model.TileType, HashSet<TileAddress>>();
+		ResetGrid();
+
+		ActiveMapGenerator = MapGeneratorSequence[_activeMapGeneratorIndex];
+		ConnectActiveMapGenerator();
+
+		TileTypeAssignments = new System.Collections.Generic.Dictionary<Model.TileType, HashSet<TileAddress>>();
 		ActiveTileMap.TileSet = SourceTileSet;
 
 		ReadTileAssociations();
+		ActiveMapGenerator.Begin();
+	}
+	
+	public void ResetGrid()
+	{
+		Grid = InitializeGrid();
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -64,14 +89,12 @@ public partial class ProceduralMapBuilder : Node
 	/// </summary>
 	public override void _ExitTree()
 	{
-		// Remove Connects to ActiveMapGenerator Delegates. 
-		ActiveMapGenerator.MapGenerated -= OnMapGenerated;
-		ActiveMapGenerator.MapUpdated -= OnMapUpdated;
-		ActiveMapGenerator.MapFinalized -= OnMapFinalized;	
+		DisconnectActiveMapGenerator();
 	}
 
 	/// <summary>
-	/// Executes when a map is generated.
+	/// Executes when a map is first generated.  Should only be called exactly once, as the first signal,
+	/// from MapGenerator instance.
 	/// </summary>
 	/// <param name="grid">The generated grid.</param>
 	private void OnMapGenerated(Model.GeneratorGrid grid)
@@ -80,7 +103,7 @@ public partial class ProceduralMapBuilder : Node
 	}
 
 	/// <summary>
-	/// Handles the event when the map is updated.
+	/// Handles the event when the map is updated.  May be signalled multiple times.
 	/// </summary>
 	/// <param name="grid">The updated generator grid.</param>
 	private void OnMapUpdated(Model.GeneratorGrid grid)
@@ -89,14 +112,66 @@ public partial class ProceduralMapBuilder : Node
 	}
 
 	/// <summary>
-	/// The method is called when the map generation process has been finalized.
+	/// The method is called when the map generation process has been finalized.  Should be signalled exactly once.
 	/// It triggers the OnMapGenerated event passing the generated grid as a parameter.
 	/// </summary>
 	/// <param name="grid">The generated grid object.</param>
-	private void OnMapFinalized(Model.GeneratorGrid grid)
+	private void OnMapFinalized(GeneratorGrid grid)
 	{
 		OnMapGenerated(grid);
+		if (TryAdvanceToNextMapGenerator())
+		{
+			ActiveMapGenerator.Begin();
+		}
 	}
+
+	private bool TryAdvanceToNextMapGenerator()
+	{
+		DisconnectActiveMapGenerator();
+		if (_activeMapGeneratorIndex + 1 < MapGeneratorSequence.Count)
+		{
+			ActiveMapGenerator = MapGeneratorSequence[_activeMapGeneratorIndex];
+			ConnectActiveMapGenerator();
+			return true;
+		}
+
+		return false;
+	}
+	
+	private void ConnectActiveMapGenerator()
+	{
+		// Attach callbacks to ActiveMapGenerator Delegates.
+		ActiveMapGenerator.MapGenerated += OnMapGenerated;
+		ActiveMapGenerator.MapUpdated += OnMapUpdated;
+		ActiveMapGenerator.MapFinalized += OnMapFinalized;	
+		
+		// Attach Grid to Generator
+		ActiveMapGenerator.Grid = Grid;
+	}
+
+	private void DisconnectActiveMapGenerator()
+	{
+		// Remove Connects to ActiveMapGenerator Delegates. 
+		ActiveMapGenerator.MapGenerated -= OnMapGenerated;
+		ActiveMapGenerator.MapUpdated -= OnMapUpdated;
+		ActiveMapGenerator.MapFinalized -= OnMapFinalized;
+
+		ActiveMapGenerator.Grid = null;
+	}
+
+	private GeneratorGrid InitializeGrid()
+	{
+		if (GeneratedMapWidth > 0 && GeneratedMapHeight > 0)
+		{
+			return new GeneratorGrid(new Vector2I( GeneratedMapWidth, GeneratedMapHeight));
+		}
+		else
+		{
+			throw new ArgumentOutOfRangeException("Width and Height must be set before initializing " +
+												  "MapGenerator's Generator Grid.");
+		}
+	}
+
 
 	/// <summary>
 	/// Renders the given generator grid by assigning tiles to grid cells based on their type.
