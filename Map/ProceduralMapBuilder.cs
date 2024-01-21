@@ -123,7 +123,7 @@ public partial class ProceduralMapBuilder : Node
 		DisconnectActiveMapGenerator();
 		if (_activeMapGeneratorIndex + 1 < MapGeneratorSequence.Count)
 		{
-			ActiveMapGenerator = MapGeneratorSequence[_activeMapGeneratorIndex];
+			ActiveMapGenerator = MapGeneratorSequence[++_activeMapGeneratorIndex];
 			ConnectActiveMapGenerator();
 			return true;
 		}

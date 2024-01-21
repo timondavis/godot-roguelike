@@ -57,8 +57,12 @@ public abstract partial class MapGenerator : Godot.Node
 		set
 		{
 			_grid = value;
-			Width = _grid.Size.X;
-			Height = _grid.Size.Y;
+
+			if (_grid != null)
+			{
+				Width = _grid.Size.X;
+				Height = _grid.Size.Y;
+			}
 		}
 	}
 

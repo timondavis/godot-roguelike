@@ -17,12 +17,12 @@ ActiveTileMap = NodePath("../TileMap")
 SourceTileSet = ExtResource("2_wjtum")
 GeneratedMapWidth = 100
 GeneratedMapHeight = 100
-MapGeneratorSequence = [NodePath("BSP Generator")]
+MapGeneratorSequence = [NodePath("BSP Generator"), NodePath("CA Generator")]
 TileAssociationsPath = "res://Asset/TileTypeAssociation/simple-tile-association.json"
 
 [node name="CA Generator" type="Node" parent="Map Builder"]
 script = ExtResource("3_1c22k")
-LifeCycles = 25
+LifeCycles = 1
 CycleEmissionDelay = 0.1
 
 [node name="BSP Generator" type="Node" parent="Map Builder"]

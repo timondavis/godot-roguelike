@@ -18,7 +18,7 @@ public partial class GridRenderer : Node
 	/// <value>
 	/// The dictionary that contains the tile type assignments.
 	/// </value>
-	public System.Collections.Generic.Dictionary<TileType, HashSet<TileAddress>> TileTypeAssignments { get; private set; }
+	public System.Collections.Generic.Dictionary<string, HashSet<TileAddress>> TileTypeAssignments { get; private set; }
 	
 	/// <summary>
 	/// @stub
@@ -32,7 +32,7 @@ public partial class GridRenderer : Node
 				"The active map generator, source tileset, or tile associations path is missing.");
 		}
 
-		TileTypeAssignments = new System.Collections.Generic.Dictionary<TileType, HashSet<TileAddress>>();
+		TileTypeAssignments = new System.Collections.Generic.Dictionary<string, HashSet<TileAddress>>();
 
 		Json json = loadAndExtractAssociationJson(tileAssociationsPath);
 		
@@ -57,7 +57,7 @@ public partial class GridRenderer : Node
 		
 		for (int i = 0; i < tileTypeAssociations.Count ; i++)
 		{
-			Godot.Collections.Dictionary tileTypeAssociation = tileTypeAssociations[i].AsGodotDictionary();
+			Dictionary tileTypeAssociation = tileTypeAssociations[i].AsGodotDictionary();
 			ValidateAssociationStructureInJsonFile(tileTypeAssociation) ;
 			
 			string tileTypeName = tileTypeAssociation["tiletype"].AsString();
@@ -77,13 +77,13 @@ public partial class GridRenderer : Node
 					tileAddressDictionary["atlasY"].AsInt32()
 				);
 
-				if (!TileTypeAssignments.ContainsKey(tileType))
+				if (!TileTypeAssignments.ContainsKey(tileType.Name))
 				{
-					TileTypeAssignments.Add(tileType, new HashSet<TileAddress>());
+					TileTypeAssignments.Add(tileType.Name, new HashSet<TileAddress>());
 				}
 
 				HashSet<TileAddress> writeToHashSet;
-				TileTypeAssignments.TryGetValue(tileType, out writeToHashSet);
+				TileTypeAssignments.TryGetValue(tileType.Name, out writeToHashSet);
 				writeToHashSet.Add(tileAddress);
 			}
 		}
@@ -120,7 +120,7 @@ public partial class GridRenderer : Node
 														"," + y.ToString() + "]");
 				}
 				
-				currentTilesAvailable = TileTypeAssignments[currentTileType];
+				currentTilesAvailable = TileTypeAssignments[currentTileType.Name];
 				if (currentTilesAvailable == null)
 				{
 					throw new InvalidOperationException("Invalid TileType on Type property of Grid Cell [" + x.ToString() + "," + y.ToString() + "]");
