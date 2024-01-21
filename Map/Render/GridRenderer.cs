@@ -24,9 +24,9 @@ public partial class GridRenderer : Node
 	/// @stub
 	/// Reads tile associations from a JSON file.
 	/// </summary>
-	public GridRenderer(Array<MapGenerator> mapGenerators, TileSet sourceTileSet, string tileAssociationsPath )
+	public GridRenderer(Array<MapGenerator> mapGenerators, string tileAssociationsPath )
 	{
-		if (mapGenerators.Count == 0 || sourceTileSet == null || string.IsNullOrEmpty(tileAssociationsPath))
+		if (mapGenerators.Count == 0 || string.IsNullOrEmpty(tileAssociationsPath))
 		{
 			throw new InvalidOperationException(
 				"The active map generator, source tileset, or tile associations path is missing.");

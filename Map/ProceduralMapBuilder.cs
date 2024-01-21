@@ -23,9 +23,25 @@ public partial class ProceduralMapBuilder : Node
 	// The TileSet from which tiles will be extracted and applied to the TileMap
 	public TileSet SourceTileSet { get; set; }
 
+	/// <summary>
+	/// Gets or sets the width of the generated map.
+	/// </summary>
+	/// <remarks>
+	/// The generated map width determines the horizontal size of the map that is being generated.
+	/// </remarks>
+	/// <value>
+	/// The width of the generated map.
+	/// </value>
 	[Export]
 	public int GeneratedMapWidth { get; set; }
-	
+
+	/// <summary>
+	/// Gets or sets the height of the generated map.
+	/// </summary>
+	/// <remarks>
+	/// This property represents the height of the generated map.
+	/// The value of this property is used to determine the vertical size of the generated map.
+	/// </remarks>
 	[Export]
 	public int GeneratedMapHeight { get; set; }
 
@@ -43,7 +59,7 @@ public partial class ProceduralMapBuilder : Node
 	
 	// The Map Generator Instance which is responsible for providing the procedural genration algorithm which
 	// will be used to build the map.
-	public Roguelike.Map.Generator.MapGenerator ActiveMapGenerator { get; private set; }
+	public MapGenerator ActiveMapGenerator { get; private set; }
 	private int _activeMapGeneratorIndex = 0;
 	private GridRenderer _gridRenderer;
 	
@@ -56,16 +72,26 @@ public partial class ProceduralMapBuilder : Node
 			throw new InvalidOperationException("MapGeneratorQueue must have at least one element.");
 		}
 
-		_gridRenderer = new GridRenderer(MapGeneratorSequence, SourceTileSet, TileAssociationsPath);
+		// Initialize the Grid Renderer.
+		_gridRenderer = new GridRenderer(MapGeneratorSequence, TileAssociationsPath);
+		
+		// Reset (Initialize) the GeneratorGrid.
 		ResetGrid();
 
+		// Set the 0th ActiveMapGenerator in the MapGeneratorSequence array.  Connect it to the system.
 		ActiveMapGenerator = MapGeneratorSequence[_activeMapGeneratorIndex];
 		ConnectActiveMapGenerator();
 
+		// Assign the given TileSet to the ActiveTileMap.  
 		ActiveTileMap.TileSet = SourceTileSet;
+		
+		// Start work on the first generator (Subsequent generators will be invoked on the OnMapFinalized callback).
 		ActiveMapGenerator.Begin();
 	}
 	
+	/// <summary>
+	/// Reinitialize the Grid, clearing out any contents.
+	/// </summary>
 	public void ResetGrid()
 	{
 		Grid = InitializeGrid();
