@@ -1,18 +1,18 @@
 using Godot;
-using System;
-using System.Collections;
+using Roguelike.Map.Model.Shapes;
 
 namespace Roguelike.Map.Model;
 
-public partial class Room : GodotObject
+public partial class Room<TRoomShape> : GodotObject where TRoomShape : Shape, new()
 {
     private static int _nextId = 1;
+    public TRoomShape Shape;
     
     public int Id { get; private set; }
-    public Vector2I Center { get; set; }
 
     public Room()
     {
+        Shape = new TRoomShape();
         Id = _nextId;
         _nextId++;
     }

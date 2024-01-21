@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Roguelike.Map.Model;
+using Roguelike.Map.Model.Shapes;
 
 public partial class PathFinder : GodotObject
 {
@@ -15,14 +16,14 @@ public partial class PathFinder : GodotObject
         TileType = type;
     }
     
-    public Queue<RectangleRoom> FindRectangleRoomPath(HashSet<RectangleRoom> rooms)
+    public Queue<Room<Rectangle>> FindRectangleRoomPath(HashSet<Room<Rectangle>> rooms)
     {
         // Sort rooms according to the position of their top left cell relative to (0,0)
-        var orderedRooms = rooms.OrderBy(room => room.TopLeft.X)
-            .ThenBy(room => room.TopLeft.Y )
+        var orderedRooms = rooms.OrderBy(room => room.Shape.TopLeft.X)
+            .ThenBy(room => room.Shape.TopLeft.Y )
             .ToList();
 
-        return new Queue<RectangleRoom>(orderedRooms);
+        return new Queue<Room<Rectangle>>(orderedRooms);
 
     }
 }

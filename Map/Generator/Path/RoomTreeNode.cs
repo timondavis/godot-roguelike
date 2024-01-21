@@ -1,15 +1,17 @@
 using Godot;
+using Roguelike.Map.Model;
+using Roguelike.Map.Model.Shapes;
 
 namespace Roguelike.Map.Generator.Path;
 
-class RoomTreeNode<T> where T : Model.Room
+class RoomTreeNode<TRoomShape> where TRoomShape : Shape, new()
 {
-    public RoomTreeNode<T> Parent = null;
-    public RoomTreeNode<T> Left = null;
-    public RoomTreeNode<T> Right = null;
-    public T Room = null;
+    public RoomTreeNode<TRoomShape> Parent = null;
+    public RoomTreeNode<TRoomShape> Left = null;
+    public RoomTreeNode<TRoomShape> Right = null;
+    public Room<TRoomShape> Room = null;
 
-    public RoomTreeNode(T room)
+    public RoomTreeNode(Room<TRoomShape> room)
     {
         Room = room;
     }

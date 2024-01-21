@@ -1,7 +1,6 @@
 using Godot;
-using System;
-using System.Threading;
 using Roguelike.Map.Model;
+using Roguelike.Map.Model.Shapes;
 
 public partial class RoomConnector : GodotObject
 {
@@ -14,11 +13,11 @@ public partial class RoomConnector : GodotObject
         TileType = type;
     }
     
-    public void ConnectRooms(Room roomA, Room roomB)
+    public void ConnectRooms<TRoomShape>(Room<TRoomShape> roomA, Room<TRoomShape> roomB) where TRoomShape : Shape, new()
     {
        // Draw an imaginary line between the center of both squares 
-       Vector2I start = roomA.Center;
-       Vector2I end = roomB.Center;
+       Vector2I start = roomA.Shape.Center;
+       Vector2I end = roomB.Shape.Center;
        
        // Draw imaginary triangle to imagine city-block path
        Vector2I midPoint = new Vector2I(start.X, end.Y);
