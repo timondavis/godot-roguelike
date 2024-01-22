@@ -76,7 +76,7 @@ public partial class Rectangle : Shape
 	}
 
 	private Vector2I _size;
-	public Vector2I Size
+	public override Vector2I Size
 	{
 		get
 		{

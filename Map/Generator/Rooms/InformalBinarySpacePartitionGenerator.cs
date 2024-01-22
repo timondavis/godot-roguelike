@@ -43,8 +43,8 @@ public partial class InformalBinarySpacePartitionGenerator : RoomGenerator
 		NumberOfRooms = GD.RandRange(RoomCountMin, RoomCountMax);
 		
 		// Create Rectangle Room encapsulating entire map.  This will be subdivided to create rooms below.
-		Room<Rectangle> entireGrid = RoomService.Instance.GenerateRoom<Rectangle>();
-		Room<Rectangle> targetDivision;
+		ShapedRoom<Rectangle> entireGrid = RoomService.Instance.GenerateShapedRoom<Rectangle>();
+		ShapedRoom<Rectangle> targetDivision;
 		entireGrid.Shape.TopLeft = new Vector2I(0, 0);
 		entireGrid.Shape.Size = new Vector2I(Grid.Size.X - 1, Grid.Size.Y - 1);
 		
@@ -78,9 +78,9 @@ public partial class InformalBinarySpacePartitionGenerator : RoomGenerator
 		}
 	}
 
-	private Room<Rectangle>[] _SubdivideX(Room<Rectangle> levelArea)
+	private ShapedRoom<Rectangle>[] _SubdivideX(ShapedRoom<Rectangle> levelArea)
 	{
-		Room<Rectangle>[] divisions = { RoomService.Instance.GenerateRoom<Rectangle>(), RoomService.Instance.GenerateRoom<Rectangle>()}; 
+		ShapedRoom<Rectangle>[] divisions = { RoomService.Instance.GenerateShapedRoom<Rectangle>(), RoomService.Instance.GenerateShapedRoom<Rectangle>()}; 
 		divisions[0].Shape.TopLeft = new Vector2I(levelArea.Shape.TopLeft.X, levelArea.Shape.TopLeft.Y);
 		divisions[1].Shape.TopLeft = new Vector2I(levelArea.Shape.Center.X + 1, levelArea.Shape.TopLeft.Y);
 
@@ -90,9 +90,9 @@ public partial class InformalBinarySpacePartitionGenerator : RoomGenerator
 		return divisions;
 	}
 
-	private Room<Rectangle>[] _SubdivideY(Room<Rectangle> levelArea)
+	private ShapedRoom<Rectangle>[] _SubdivideY(ShapedRoom<Rectangle> levelArea)
 	{
-		Room<Rectangle>[] divisions = { RoomService.Instance.GenerateRoom<Rectangle>(), RoomService.Instance.GenerateRoom<Rectangle>() }; 
+		ShapedRoom<Rectangle>[] divisions = { RoomService.Instance.GenerateShapedRoom<Rectangle>(), RoomService.Instance.GenerateShapedRoom<Rectangle>() }; 
 		divisions[0].Shape.TopLeft = new Vector2I(levelArea.Shape.TopLeft.X, levelArea.Shape.TopLeft.Y);
 		divisions[1].Shape.TopLeft = new Vector2I(levelArea.Shape.TopLeft.X, levelArea.Shape.Center.Y + 1);
 
@@ -102,7 +102,7 @@ public partial class InformalBinarySpacePartitionGenerator : RoomGenerator
 		return divisions;
 	}
 
-	private Room<Rectangle> GenerateRoomDivision(Room<Rectangle> baseArea)
+	private ShapedRoom<Rectangle> GenerateRoomDivision(ShapedRoom<Rectangle> baseArea)
 	{
 		// Calculate Depth of BSP Algorithm so that it can faciltiate the chosen number of rooms.
 		double preciseBinaryDepth = Math.Log2(NumberOfRooms);
@@ -112,8 +112,8 @@ public partial class InformalBinarySpacePartitionGenerator : RoomGenerator
 		int targetDepth = GD.RandRange(minBinaryDepth, minBinaryDepth + 3);
 		
 		// Storage for algorithm data and results
-		Room<Rectangle>[] divisions;
-		Room<Rectangle> targetDivision = baseArea;
+		ShapedRoom<Rectangle>[] divisions;
+		ShapedRoom<Rectangle> targetDivision = baseArea;
 		int divisionSelection;
 		
 		for (int currentDepth = 0; currentDepth < (targetDepth); currentDepth++)
@@ -136,7 +136,7 @@ public partial class InformalBinarySpacePartitionGenerator : RoomGenerator
 		return targetDivision;
 	}
 
-	private void PlaceRoom(Room<Rectangle> targetDivision, TileType tileType)
+	private void PlaceRoom(ShapedRoom<Rectangle> targetDivision, TileType tileType)
 	{
 		Grid.MoveTo(targetDivision.Shape.TopLeft);
 		Grid.FillRect(targetDivision.Shape.Size, tileType);

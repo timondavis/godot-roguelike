@@ -5,19 +5,22 @@ using Roguelike.Map.Model.Shapes;
 
 namespace Roguelike.Map.Generator.Path;
 
-public class RoomGraphNode<TRoomShape> where TRoomShape : Shape, new()
+public class RoomGraphNode
 {
-   public HashSet<RoomGraphNode<TRoomShape>> ConnectedNodes { get; private set; }
-   public Room<TRoomShape> Room{ get; private set; }
+   public HashSet<RoomGraphNode> ConnectedNodes { get; private set; }
+   public Room Room{ get; private set; }
 
    public Vector2I Position
    {
-      get { return Room.Shape.Center; }
+      get
+      {
+         return Room.Location;
+      }
    }
 
-   public RoomGraphNode(Room<TRoomShape> room)
+   public RoomGraphNode(Room room)
    {
-      ConnectedNodes = new HashSet<RoomGraphNode<TRoomShape>>();
+      ConnectedNodes = new HashSet<RoomGraphNode>();
       Room = room;
    }
 }

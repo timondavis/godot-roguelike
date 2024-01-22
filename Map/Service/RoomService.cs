@@ -25,7 +25,7 @@ public class RoomService
     {
     }
 
-    public bool IsRoomAreaVacant<TRoomShape>(Room<TRoomShape> room, GeneratorGrid grid) where TRoomShape : Shape
+    public bool IsRoomAreaVacant<TRoomShape>(ShapedRoom<TRoomShape> room, GeneratorGrid grid) where TRoomShape : Shape
     {
         Vector2I placeholder = new Vector2I(grid.Current.Position.X, grid.Current.Position.Y);
         bool isRoomAvailable = true;
@@ -51,13 +51,13 @@ public class RoomService
         return isRoomAvailable;
     }
     
-    public Room<TRoomShape> GenerateRoom<TRoomShape>() where TRoomShape : Shape, new ()
+    public ShapedRoom<TRoomShape> GenerateShapedRoom<TRoomShape>() where TRoomShape : Shape, new ()
     {
-        Room<TRoomShape> room = new Room<TRoomShape>(new TRoomShape());
+        ShapedRoom<TRoomShape> room = new ShapedRoom<TRoomShape>(new TRoomShape());
         return room;
     }
 
-    public bool IsRoomAreaIsolated<TRoomShape>(Room<TRoomShape> room, GeneratorGrid grid) where TRoomShape : Shape
+    public bool IsRoomAreaIsolated<TRoomShape>(ShapedRoom<TRoomShape> room, GeneratorGrid grid) where TRoomShape : Shape
     {
         Vector2I placeholder = new Vector2I(grid.Current.Position.X, grid.Current.Position.Y);
         bool isRoomIsolated = true;

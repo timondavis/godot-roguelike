@@ -5,6 +5,7 @@ namespace Roguelike.Map.Model.Shapes;
 public abstract partial class Shape : Node
 {
     public Vector2I Center;
+    public abstract Vector2I Size { get; set; }
 
     public abstract bool Intersects(Shape leftShape, Shape rightShape);
     

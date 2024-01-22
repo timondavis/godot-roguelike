@@ -57,27 +57,28 @@ public partial class BinarySpacePartitionGenerator : RoomGenerator
 		await PlaceRoom(Tree.Head, floorTile);
 	}
 
-	private void SubdivideNodeX(RoomTreeNode<Rectangle> node, int depthRemaining)
+	private void SubdivideNodeX(RoomTreeNode node, int depthRemaining)
 	{
-		Room<Rectangle>[] divisions = new Room<Rectangle>[AxisDivisions];
+		ShapedRoom<Rectangle>[] divisions = new ShapedRoom<Rectangle>[AxisDivisions];
+		ShapedRoom<Rectangle> nodeShapedRoom = node.GetShapedRoom<Rectangle>();
 		double divisionSizeMultiplier = 0.5;
 		Vector2I roomSize = new Vector2I(
-			(int) Math.Floor(node.Room.Shape.Size.X * divisionSizeMultiplier),
-			node.Room.Shape.Size.Y
+			(int) Math.Floor(nodeShapedRoom.Shape.Size.X * divisionSizeMultiplier),
+			nodeShapedRoom.Shape.Size.Y
 		);
 		for (int divIdx = 0; divIdx < AxisDivisions; divIdx++)
 		{
-			divisions[divIdx] = RoomService.Instance.GenerateRoom<Rectangle>();
+			divisions[divIdx] = RoomService.Instance.GenerateShapedRoom<Rectangle>();
 			divisions[divIdx].Shape.TopLeft = new Vector2I(
-				node.Room.Shape.TopLeft.X + (divIdx * (int) Math.Ceiling(node.Room.Shape.Size.X / (double) AxisDivisions)),
-				node.Room.Shape.TopLeft.Y
+				nodeShapedRoom.Shape.TopLeft.X + (divIdx * (int) Math.Ceiling(nodeShapedRoom.Shape.Size.X / (double) AxisDivisions)),
+				nodeShapedRoom.Shape.TopLeft.Y
 			);
 			divisions[divIdx].Shape.Size = roomSize;
 		}
 
-		node.Left = new RoomTreeNode<Rectangle>(divisions[0]);
+		node.Left = new RoomTreeNode(divisions[0]);
 		node.Left.Parent = node;
-		node.Right = new RoomTreeNode<Rectangle>(divisions[1]);
+		node.Right = new RoomTreeNode(divisions[1]);
 		node.Right.Parent = node;
 
 		depthRemaining -= 1;
@@ -89,26 +90,27 @@ public partial class BinarySpacePartitionGenerator : RoomGenerator
 		} 
 	}
 
-	private void SubdivideNodeY(RoomTreeNode<Rectangle> node, int depthRemaining)
+	private void SubdivideNodeY(RoomTreeNode node, int depthRemaining)
 	{
-		Room<Rectangle>[] divisions = new Room<Rectangle>[AxisDivisions];
+		ShapedRoom<Rectangle>[] divisions = new ShapedRoom<Rectangle>[AxisDivisions];
+		ShapedRoom<Rectangle> nodeShapedRoom = node.GetShapedRoom<Rectangle>();
 		Vector2I roomSize = new Vector2I(
-			node.Room.Shape.Size.X,
-			(int) Math.Floor(node.Room.Shape.Size.Y / (double) AxisDivisions)
+			nodeShapedRoom.Shape.Size.X,
+			(int) Math.Floor(nodeShapedRoom.Shape.Size.Y / (double) AxisDivisions)
 		);
 		for (int divIdx = 0; divIdx < AxisDivisions; divIdx++)
 		{
-			divisions[divIdx] = RoomService.Instance.GenerateRoom<Rectangle>();
+			divisions[divIdx] = RoomService.Instance.GenerateShapedRoom<Rectangle>();
 			divisions[divIdx].Shape.TopLeft = new Vector2I(
-				node.Room.Shape.TopLeft.X,
-				node.Room.Shape.TopLeft.Y + (divIdx * (int) Math.Ceiling(node.Room.Shape.Size.Y / (double) AxisDivisions))
+				nodeShapedRoom.Shape.TopLeft.X,
+				nodeShapedRoom.Shape.TopLeft.Y + (divIdx * (int) Math.Ceiling(nodeShapedRoom.Shape.Size.Y / (double) AxisDivisions))
 			);
 			divisions[divIdx].Shape.Size = roomSize;
 		}
 
-		node.Left = new RoomTreeNode<Rectangle>(divisions[0]);
+		node.Left = new RoomTreeNode(divisions[0]);
 		node.Left.Parent = node;
-		node.Right = new RoomTreeNode<Rectangle>(divisions[1]);
+		node.Right = new RoomTreeNode(divisions[1]);
 		node.Right.Parent = node;
 
 		depthRemaining -= 1;
@@ -120,8 +122,9 @@ public partial class BinarySpacePartitionGenerator : RoomGenerator
 		} 
 	}
 
-	private async Task PlaceRoom(RoomTreeNode<Rectangle> node, TileType tileType)
+	private async Task PlaceRoom(RoomTreeNode node, TileType tileType)
 	{
+		ShapedRoom<Rectangle> nodeShapedRoom = node.GetShapedRoom<Rectangle>();
 		// 0. Don't do anything if the node has children.
 		if (node.Left != null)
 		{
@@ -136,7 +139,7 @@ public partial class BinarySpacePartitionGenerator : RoomGenerator
 		else
 		{
 			// 1. Mutate Room 
-			Vector2I maxDimensions = new Vector2I(node.Room.Shape.Size.X, node.Room.Shape.Size.Y);
+			Vector2I maxDimensions = new Vector2I(nodeShapedRoom.Shape.Size.X, nodeShapedRoom.Shape.Size.Y);
 
 			Vector2I roomDimensions = new Vector2I(
 				GD.RandRange((int)Math.Floor(maxDimensions.X * .33), maxDimensions.X),
@@ -144,22 +147,22 @@ public partial class BinarySpacePartitionGenerator : RoomGenerator
 			);
 
 			Vector2I roomOffset = new Vector2I(
-				GD.RandRange(0, node.Room.Shape.Size.X - roomDimensions.X),
-				GD.RandRange(0, node.Room.Shape.Size.Y - roomDimensions.Y)
+				GD.RandRange(0, nodeShapedRoom.Shape.Size.X - roomDimensions.X),
+				GD.RandRange(0, nodeShapedRoom.Shape.Size.Y - roomDimensions.Y)
 			);
 
-			Room<Rectangle> revisedRoom = RoomService.Instance.GenerateRoom<Rectangle>();
+			ShapedRoom<Rectangle> revisedRoom = RoomService.Instance.GenerateShapedRoom<Rectangle>();
 			revisedRoom.Shape.Size = roomDimensions;
 			revisedRoom.Shape.TopLeft = new Vector2I(
-				node.Room.Shape.TopLeft.X + roomOffset.X,
-				node.Room.Shape.TopLeft.Y + roomOffset.Y
+				nodeShapedRoom.Shape.TopLeft.X + roomOffset.X,
+				nodeShapedRoom.Shape.TopLeft.Y + roomOffset.Y
 			);
 
 			node.Room = revisedRoom;
 		
 			// 2. Draw Room
-			Grid.MoveTo(node.Room.Shape.TopLeft);
-			Grid.FillRect(node.Room.Shape.Size, tileType, true);
+			Grid.MoveTo(revisedRoom.Shape.TopLeft);
+			Grid.FillRect(revisedRoom.Shape.Size, tileType, true);
 		
 			if (CycleEmissionDelay > 0)
 			{
@@ -171,7 +174,7 @@ public partial class BinarySpacePartitionGenerator : RoomGenerator
 
 	private RoomTree<Rectangle> InitializeTree()
 	{
-		Room<Rectangle> entireRoom = RoomService.Instance.GenerateRoom<Rectangle>();
+		ShapedRoom<Rectangle> entireRoom = RoomService.Instance.GenerateShapedRoom<Rectangle>();
 		entireRoom.Shape.TopLeft = new Vector2I(0, 0);
 		entireRoom.Shape.Size = new Vector2I(
 			Grid.Size.X,
@@ -179,22 +182,22 @@ public partial class BinarySpacePartitionGenerator : RoomGenerator
 		);
 
 		RoomTree<Rectangle> tree = new RoomTree<Rectangle>();
-		tree.Head = new RoomTreeNode<Rectangle>(entireRoom);
+		tree.Head = new RoomTreeNode(entireRoom);
 		
 		return tree;
 	}
 
 	protected override async Task ConnectRooms()
 	{
-		RoomGraph<Rectangle> rg = new RoomGraph<Rectangle>();
+		RoomGraph rg = new RoomGraph();
 		Tree.LoadChildrenToGraph(rg);
-		List<RoomGraphNode<Rectangle>> nodes = rg.Nodes.ToList();
+		List<RoomGraphNode> nodes = rg.Nodes.ToList();
 		int nodesMax;
 		foreach (var node in nodes)
 		{
 			nodesMax = GD.RandRange(MinConnectionsPerRoom, MaxConnectionsPerRoom);
-			List<RoomGraphNode<Rectangle>> closestNodes = rg.GetClosestNodes(node, nodesMax);
-			foreach (RoomGraphNode<Rectangle> closeNode in closestNodes)
+			List<RoomGraphNode> closestNodes = rg.GetClosestNodes(node, nodesMax);
+			foreach (RoomGraphNode closeNode in closestNodes)
 			{
 				rg.AddRoomConnection(node, closeNode);
 			}

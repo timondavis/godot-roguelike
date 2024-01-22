@@ -5,14 +5,14 @@ namespace Roguelike.Map.Generator.Path;
 
 class RoomTree<TRoomShape> where TRoomShape : Shape, new()
 {
-    public RoomTreeNode<TRoomShape> Head = null;
+    public RoomTreeNode Head = null;
 
-    public void LoadChildrenToGraph(RoomGraph<TRoomShape> graph)
+    public void LoadChildrenToGraph(RoomGraph graph)
     {
         LoadChildrenToGraph(graph, Head);
     }
     
-    private void LoadChildrenToGraph(RoomGraph<TRoomShape> graph, RoomTreeNode<TRoomShape> node)
+    private void LoadChildrenToGraph(RoomGraph graph, RoomTreeNode node)
     {
         if (node.Left == null && node.Right == null)
         {
@@ -31,14 +31,14 @@ class RoomTree<TRoomShape> where TRoomShape : Shape, new()
         } 
     }
 
-    public List<RoomTreeNode<TRoomShape>> GetChildren()
+    public List<RoomTreeNode> GetChildren()
     {
-        List<RoomTreeNode<TRoomShape>> childList = new List<RoomTreeNode<TRoomShape>>();
+        List<RoomTreeNode> childList = new List<RoomTreeNode>();
         SeekChildren(childList, Head);
         return childList;
     }
 
-    private void SeekChildren(List<RoomTreeNode<TRoomShape>> childList, RoomTreeNode<TRoomShape> node)
+    private void SeekChildren(List<RoomTreeNode> childList, RoomTreeNode node)
     {
         if (node.Left == null && node.Right == null)
         {

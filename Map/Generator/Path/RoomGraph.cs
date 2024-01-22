@@ -6,43 +6,43 @@ using Roguelike.Map.Model.Shapes;
 
 namespace Roguelike.Map.Generator.Path;
 
-public class RoomGraph<TRoomShape> where TRoomShape : Shape, new()
+public class RoomGraph
 {
-    public HashSet<RoomGraphNode<TRoomShape>> Nodes { get; private set; }
-    private SortedDictionary<int, HashSet<RoomGraphNode<TRoomShape>>> xIndex;
-    private SortedDictionary<int, HashSet<RoomGraphNode<TRoomShape>>> yIndex;
+    public HashSet<RoomGraphNode> Nodes { get; private set; }
+    private SortedDictionary<int, HashSet<RoomGraphNode>> xIndex;
+    private SortedDictionary<int, HashSet<RoomGraphNode>> yIndex;
 
     public RoomGraph()
     {
-        Nodes = new HashSet<RoomGraphNode<TRoomShape>>();
-        xIndex = new SortedDictionary<int, HashSet<RoomGraphNode<TRoomShape>>>();
-        yIndex = new SortedDictionary<int, HashSet<RoomGraphNode<TRoomShape>>>();
+        Nodes = new HashSet<RoomGraphNode>();
+        xIndex = new SortedDictionary<int, HashSet<RoomGraphNode>>();
+        yIndex = new SortedDictionary<int, HashSet<RoomGraphNode>>();
     }
 
-    public void AddRoom(Room<TRoomShape> room)
+    public void AddRoom(Room room)
     {
-        RoomGraphNode<TRoomShape> node = new RoomGraphNode<TRoomShape>(room);
+        RoomGraphNode node = new RoomGraphNode(room);
         Nodes.Add(node);
-        xIndex.TryAdd(room.Shape.Center.X, new HashSet<RoomGraphNode<TRoomShape>>());
-        yIndex.TryAdd(room.Shape.Center.Y, new HashSet<RoomGraphNode<TRoomShape>>());
-
-        xIndex[room.Shape.Center.X].Add(node);
-        yIndex[room.Shape.Center.Y].Add(node);
+        xIndex.TryAdd(node.Room.Location.X, new HashSet<RoomGraphNode>());
+        yIndex.TryAdd(node.Room.Location.Y, new HashSet<RoomGraphNode>());
+        
+        xIndex[node.Room.Location.X].Add(node);
+        yIndex[node.Room.Location.Y].Add(node);
     }
 
-    public void AddRoomConnection(RoomGraphNode<TRoomShape> left, RoomGraphNode<TRoomShape> right)
+    public void AddRoomConnection(RoomGraphNode left, RoomGraphNode right)
     {
         left.ConnectedNodes.Add(right);
         right.ConnectedNodes.Add(left);
     }
 
-    public List<RoomGraphNode<TRoomShape>> GetClosestNodes(RoomGraphNode<TRoomShape> node, int nodesMax)
+    public List<RoomGraphNode> GetClosestNodes(RoomGraphNode node, int nodesMax)
     {
-        SortedDictionary<int, HashSet<RoomGraphNode<TRoomShape>>> candidateNodes = new SortedDictionary<int, HashSet<RoomGraphNode<TRoomShape>>>();
+        SortedDictionary<int, HashSet<RoomGraphNode>> candidateNodes = new SortedDictionary<int, HashSet<RoomGraphNode>>();
         AddCandidateDistanceNodesFromIndex(node.Position.X, node, xIndex, candidateNodes, nodesMax + 1);
         AddCandidateDistanceNodesFromIndex(node.Position.Y, node, yIndex, candidateNodes, nodesMax + 1);
         
-        List<RoomGraphNode<TRoomShape>> resultsList = new List<RoomGraphNode<TRoomShape>>();
+        List<RoomGraphNode> resultsList = new List<RoomGraphNode>();
         var candidatesEnum = candidateNodes.GetEnumerator();
         while (resultsList.Count < nodesMax && candidatesEnum.MoveNext()) 
         {
@@ -62,9 +62,9 @@ public class RoomGraph<TRoomShape> where TRoomShape : Shape, new()
 
     private void AddCandidateDistanceNodesFromIndex(
         int nodeReferenceValue,
-        RoomGraphNode<TRoomShape> referenceNode,
-        SortedDictionary<int, HashSet<RoomGraphNode<TRoomShape>>> nodeIndex,
-        SortedDictionary<int, HashSet<RoomGraphNode<TRoomShape>>> candidateNodes,
+        RoomGraphNode referenceNode,
+        SortedDictionary<int, HashSet<RoomGraphNode>> nodeIndex,
+        SortedDictionary<int, HashSet<RoomGraphNode>> candidateNodes,
         int maxCandidates
         )
     {
@@ -75,7 +75,7 @@ public class RoomGraph<TRoomShape> where TRoomShape : Shape, new()
         foreach (int x in values)
         {
             var list = nodeIndex[x];
-            foreach (RoomGraphNode<TRoomShape> n in list)
+            foreach (RoomGraphNode n in list)
             {
                 if (n.Room.Id == referenceNode.Room.Id)
                 {
@@ -89,7 +89,7 @@ public class RoomGraph<TRoomShape> where TRoomShape : Shape, new()
                 var bSqr = Math.Abs(referenceNode.Position.Y - posY) ^ 2;
                 var distance = (int)Math.Round(Math.Sqrt(aSqr + bSqr));
 
-                candidateNodes.TryAdd(distance, new HashSet<RoomGraphNode<TRoomShape>>());
+                candidateNodes.TryAdd(distance, new HashSet<RoomGraphNode>());
                 candidateNodes[distance].Add(n);
             }
         }

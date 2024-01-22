@@ -4,15 +4,20 @@ using Roguelike.Map.Model.Shapes;
 
 namespace Roguelike.Map.Generator.Path;
 
-class RoomTreeNode<TRoomShape> where TRoomShape : Shape, new()
+class RoomTreeNode
 {
-    public RoomTreeNode<TRoomShape> Parent = null;
-    public RoomTreeNode<TRoomShape> Left = null;
-    public RoomTreeNode<TRoomShape> Right = null;
-    public Room<TRoomShape> Room = null;
+    public RoomTreeNode Parent = null;
+    public RoomTreeNode Left = null;
+    public RoomTreeNode Right = null;
+    public Room Room = null;
 
-    public RoomTreeNode(Room<TRoomShape> room)
+    public RoomTreeNode(Room room)
     {
         Room = room;
+    }
+
+    public ShapedRoom<TRoomShape> GetShapedRoom<TRoomShape>() where TRoomShape : Shape
+    {
+        return Room as ShapedRoom<TRoomShape>;
     }
 }

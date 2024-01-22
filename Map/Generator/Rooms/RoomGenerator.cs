@@ -17,7 +17,7 @@ public abstract partial class RoomGenerator : MapGenerator
 
 	public int NumberOfRooms = 0;
 	public int RoomApplicationAttemptsMax = 100;
-	public HashSet<Room<Rectangle>> Rooms = new HashSet<Room<Rectangle>>();
+	public HashSet<Room> Rooms = new HashSet<Room>();
 	
 	public RoomGenerator() : base()
 	{
@@ -54,10 +54,10 @@ public abstract partial class RoomGenerator : MapGenerator
 	protected virtual async Task ConnectRooms()
 	{
 		PathFinder pf = new PathFinder(Grid, TileTypes.FindByName(TileType_Floor));
-		Queue<Room<Rectangle>> path = pf.FindRectangleRoomPath(Rooms);
+		Queue<Room> path = pf.FindRoomPath(Rooms);
 
-		Room<Rectangle> room1;
-		Room<Rectangle> room2;
+		Room room1;
+		Room room2;
 		RoomConnector rc = new RoomConnector(Grid, TileTypes.FindByName(TileType_Floor));
 		while (path.TryDequeue(out room1) && path.TryPeek(out room2))
 		{

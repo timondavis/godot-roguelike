@@ -15,14 +15,25 @@ public partial class PathFinder : GodotObject
         Grid = grid;
         TileType = type;
     }
-    
-    public Queue<Room<Rectangle>> FindRectangleRoomPath(HashSet<Room<Rectangle>> rooms)
+
+    /// <summary>
+    /// Finds the room path based on the position of their center cell relative to (0,0).
+    /// </summary>
+    /// <param name="rooms">The set of rooms to find path for.</param>
+    /// <returns>A queue of rooms sorted in the path order.</returns>
+    public Queue<Room> FindRoomPath(HashSet<Room> rooms)
     {
         // Sort rooms according to the position of their top left cell relative to (0,0)
-        var orderedRooms = rooms.OrderBy(room => room.Shape.TopLeft.X)
-            .ThenBy(room => room.Shape.TopLeft.Y )
+        var orderedRooms = rooms.OrderBy(room =>
+            {
+                return room.Location.X;
+            })
+            .ThenBy(room =>
+            {
+                return room.Location.Y;
+            })
             .ToList();
 
-        return new Queue<Room<Rectangle>>(orderedRooms);
+        return new Queue<Room>(orderedRooms);
     }
 }

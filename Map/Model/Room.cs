@@ -3,20 +3,15 @@ using Roguelike.Map.Model.Shapes;
 
 namespace Roguelike.Map.Model;
 
-public partial class Room<TRoomShape> : GodotObject where TRoomShape : Shape
+public abstract partial class Room
 {
     private static int _nextId = 1;
-    public TRoomShape Shape;
     
     public int Id { get; private set; }
+    public abstract Vector2I Location { get; }
+    public abstract Vector2I Size { get; }
     
-    public Room(TRoomShape shape)
-    {
-        Shape = shape;
-        InitializeCore();
-    }
-
-    private void InitializeCore()
+    public Room()
     {
         Id = _nextId;
         _nextId++;
