@@ -1,9 +1,11 @@
 using System;
 using System.Threading.Tasks;
 using Godot;
+using Roguelike.Map.Generator.Service;
 using Roguelike.Map.Model;
+using Roguelike.Map.Model.Shapes;
 
-namespace Roguelike.Map.Generator.Room;
+namespace Roguelike.Map.Generator.Rooms;
 
 public partial class BasicRoomPlacementGenerator : RoomGenerator
 
@@ -80,18 +82,16 @@ public partial class BasicRoomPlacementGenerator : RoomGenerator
 		
 		double centerX = (double)(startX) + (double)(roomWidth / 2.0);
 		double centerY = (double)(startY) + (double)(roomHeight / 2.0);
-		RectangleRoom room  = new RectangleRoom
-		{
-			Center = new Vector2I( (int) Math.Floor( centerX ), (int) Math.Floor( centerY ) ),
-			TopLeft = new Vector2I(startX, startY),
-			Size = new Vector2I(roomWidth, roomHeight)
-		};
+		ShapedRoom<Rectangle> room = RoomService.Instance.GenerateShapedRoom<Rectangle>();
+		room.Shape.Center = new Vector2I( (int) Math.Floor( centerX ), (int) Math.Floor( centerY ) );
+		room.Shape.TopLeft = new Vector2I(startX, startY);
+		room.Shape.Size = new Vector2I(roomWidth, roomHeight); 
 			
 		// Return false if conflict is found.
-		if (IsRoomIsolated(room))
+		if (RoomService.Instance.IsRoomAreaIsolated(room, Grid))
 		{
-			Grid.MoveTo(room.TopLeft);
-			Grid.FillRect(room.Size, floorTileType);
+			Grid.MoveTo(room.Shape.TopLeft);
+			Grid.FillRect(room.Shape.Size, floorTileType);
 			Rooms.Add(room);
 				
 			return true;

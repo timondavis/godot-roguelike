@@ -1,12 +1,9 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using Godot;
 using Godot.Collections;
+using Roguelike.Map.Generator.Service;
 using Roguelike.Map.Model;
 using Roguelike.Map.Render;
-using FileAccess = Godot.FileAccess;
 
 namespace Roguelike.Map.Generator;
 
@@ -164,6 +161,12 @@ public partial class ProceduralMapBuilder : Node
 		ActiveMapGenerator.MapUpdated += OnMapUpdated;
 		ActiveMapGenerator.MapFinalized += OnMapFinalized;	
 		
+		// Register any SelectedAreas indicated on the MapGenerator to the SelectionService
+		if (ActiveMapGenerator.SelectedAreas.Count > 0)
+		{
+			SelectionService.Instance.SelectedAreas = ActiveMapGenerator.SelectedAreas;
+		}
+		
 		// Attach Grid to Generator
 		ActiveMapGenerator.Grid = Grid;
 	}
@@ -174,7 +177,11 @@ public partial class ProceduralMapBuilder : Node
 		ActiveMapGenerator.MapGenerated -= OnMapGenerated;
 		ActiveMapGenerator.MapUpdated -= OnMapUpdated;
 		ActiveMapGenerator.MapFinalized -= OnMapFinalized;
+		
+		// Clear any selected zones
+		SelectionService.Instance.ClearSelectedAreas();
 
+		// Disconnect the grid from the active map generator.
 		ActiveMapGenerator.Grid = null;
 	}
 
