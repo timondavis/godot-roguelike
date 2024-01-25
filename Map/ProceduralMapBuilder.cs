@@ -161,10 +161,10 @@ public partial class ProceduralMapBuilder : Node
 		ActiveMapGenerator.MapUpdated += OnMapUpdated;
 		ActiveMapGenerator.MapFinalized += OnMapFinalized;	
 		
-		// Register any SelectionZones indicated on the MapGenerator to the SelectionService
-		if (ActiveMapGenerator.SelectionZones.Count > 0)
+		// Register any SelectedAreas indicated on the MapGenerator to the SelectionService
+		if (ActiveMapGenerator.SelectedAreas.Count > 0)
 		{
-			SelectionService.Instance.SelectedAreas = ActiveMapGenerator.SelectionZones;
+			SelectionService.Instance.SelectedAreas = ActiveMapGenerator.SelectedAreas;
 		}
 		
 		// Attach Grid to Generator
