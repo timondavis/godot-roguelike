@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Godot;
+using Roguelike.Map.Generator.Service;
 
 namespace Roguelike.Map.Generator;
 
@@ -75,7 +76,11 @@ public partial class CellularAutomataMapGenerator : Roguelike.Map.Generator.MapG
 		{
 			for (int y = 0; y < Grid.Size.Y; y++)
 			{
-				AssessCellLife(ref lifeTracker, new Vector2I(x, y));
+				var position = new Vector2I(x, y);
+				if (SelectionService.Instance.IsPositionSelected(position))
+				{
+					AssessCellLife(ref lifeTracker, position);
+				}
 			}
 		}
 

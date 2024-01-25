@@ -3,7 +3,7 @@ using Roguelike.Map.Model.Shapes;
 
 namespace Roguelike.Map.Generator.Path;
 
-class RoomTree<TRoomShape> where TRoomShape : Shape, new()
+class RoomTree 
 {
     public RoomTreeNode Head = null;
 
