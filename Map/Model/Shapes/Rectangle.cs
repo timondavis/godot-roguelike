@@ -1,12 +1,52 @@
 using System;
 using System.Drawing;
+using System.Transactions;
 using Godot;
 
 namespace Roguelike.Map.Model.Shapes;
 
 public partial class Rectangle : Shape
 {
+	[Export]
+	public Vector2I TopLeft
+	{
+		get { return _topLeft; }
+		set
+		{
+			_topLeft = value;
+			_isTopLeftSet = true;
+			SetCenter();
+		}
+	}
+
+	[Export]
+	public int Width
+	{
+		get { return Size.X; }
+		set
+		{
+			_size.X = value;
+			_isSizeSet = true;
+		}
+	}
+
+	[Export]
+	public int Height
+	{
+		get { return Size.Y; }
+		set
+		{
+			_size.Y = value;
+			_isSizeSet = true;
+		}
+	}
+
 	private bool _isSizeSet = false;
+
+	public Rectangle() : base()
+	{
+		_size = new Vector2I();
+	}
 	
 	public override bool Intersects(Shape leftShape, Shape rightShape)
 	{
@@ -100,21 +140,6 @@ public partial class Rectangle : Shape
 		}
 	}
 	private Vector2I _topLeft;
-
-	public Vector2I TopLeft
-	{
-		get
-		{
-			return _topLeft;
-		}
-		set
-		{
-			_topLeft = value;
-			_isTopLeftSet = true;
-			SetCenter();
-		}
-	}
-
 
 	private void SetCenter()
 	{

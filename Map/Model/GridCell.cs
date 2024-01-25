@@ -1,6 +1,7 @@
 using System;
 using Godot;
 using Godot.Collections;
+using Roguelike.Map.Generator.Service;
 
 namespace Roguelike.Map.Model;
 
@@ -54,8 +55,11 @@ public partial class GridCell : GodotObject
 	/// <param name="type">The type of the tile to activate.</param>
 	public void Activate(TileType type)
 	{
-		IsActive = true;
-		Type = type;
+		if (SelectionService.Instance.IsPositionSelected(Position))
+		{
+			IsActive = true;
+			Type = type;
+		}
 	}
 
 	/// <summary>
@@ -63,8 +67,11 @@ public partial class GridCell : GodotObject
 	/// </summary>
 	public void Deactivate()
 	{
-		IsActive = false;
-		Type = null;
+		if (SelectionService.Instance.IsPositionSelected(Position))
+		{
+			IsActive = false;
+			Type = null;
+		}
 	}
 
 	/// <summary>

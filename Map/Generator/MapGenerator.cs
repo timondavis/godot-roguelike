@@ -1,11 +1,19 @@
-using System;
 using Godot;
+using Godot.Collections;
 using Roguelike.Map.Model;
+using Roguelike.Map.Model.Shapes;
 
 namespace Roguelike.Map.Generator;
 
 public abstract partial class MapGenerator : Godot.Node
 {
+	/// <summary>
+	/// When defined, any work done by this generator will only take place within SelectionZones.
+	/// Area outside of SelectionZone will be unaffected by this generator.
+	/// If no SelectionZones are supplied, work will happen across entire map.
+	/// </summary>
+	[Export] public Array<Shape> SelectionZones { get; set; }
+	
 	/// <summary>
 	/// Delegate representing an event when a map is generated.
 	/// </summary>

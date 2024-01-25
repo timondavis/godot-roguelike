@@ -4,6 +4,9 @@ using Roguelike.Map.Model.Shapes;
 
 namespace Roguelike.Map.Generator.Service;
 
+/// <summary>
+/// Information and manipulation services for Rooms
+/// </summary>
 public class RoomService
 {
     private static RoomService _instance;
