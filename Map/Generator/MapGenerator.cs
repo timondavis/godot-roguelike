@@ -7,12 +7,30 @@ namespace Roguelike.Map.Generator;
 
 public abstract partial class MapGenerator : Godot.Node
 {
+	private Array<Shape> _selectedAreas;
+
 	/// <summary>
 	/// When defined, any work done by this generator will only take place within SelectedAreas.
 	/// Area outside of SelectedAreas will be unaffected by this generator.
 	/// If no SelectedAreas are supplied, work will happen across entire map.
 	/// </summary>
-	[Export] public Array<Shape> SelectedAreas { get; set; }
+	[Export]
+	public Array<Shape> SelectedAreas
+	{
+		get
+		{
+			if (_selectedAreas == null)
+			{
+				_selectedAreas = new Array<Shape>();
+			}
+
+			return _selectedAreas;
+		}
+		set
+		{
+			_selectedAreas = value;
+		}
+	}
 	
 	/// <summary>
 	/// Delegate representing an event when a map is generated.

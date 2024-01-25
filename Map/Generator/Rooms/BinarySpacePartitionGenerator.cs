@@ -16,7 +16,7 @@ public partial class BinarySpacePartitionGenerator : RoomGenerator
 	[Export(PropertyHint.Range, "1,10,1")] public int MinConnectionsPerRoom { get; set; }
 	[Export(PropertyHint.Range, "1,10,1")] public int MaxConnectionsPerRoom { get; set; }
 	private const int AxisDivisions = 2;
-	private RoomTree<Rectangle> Tree;
+	private RoomTree _tree;
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
@@ -41,20 +41,20 @@ public partial class BinarySpacePartitionGenerator : RoomGenerator
 	{
 		TileType floorTile = TileTypes.FindByName(TileType_Floor);
 		
-		Tree = InitializeTree();
+		_tree = InitializeTree();
 		var xOrY = GD.RandRange(0, 1);
 
 		int depthRemaining = DivisionDepth;
 		if (xOrY == 0)
 		{
-			SubdivideNodeX(Tree.Head, depthRemaining);
+			SubdivideNodeX(_tree.Head, depthRemaining);
 		}
 		else
 		{
-			SubdivideNodeX(Tree.Head, depthRemaining);
+			SubdivideNodeX(_tree.Head, depthRemaining);
 		}
 		
-		await PlaceRoom(Tree.Head, floorTile);
+		await PlaceRoom(_tree.Head, floorTile);
 	}
 
 	private void SubdivideNodeX(RoomTreeNode node, int depthRemaining)
@@ -172,7 +172,7 @@ public partial class BinarySpacePartitionGenerator : RoomGenerator
 		}
 	}
 
-	private RoomTree<Rectangle> InitializeTree()
+	private RoomTree InitializeTree()
 	{
 		ShapedRoom<Rectangle> entireRoom = RoomService.Instance.GenerateShapedRoom<Rectangle>();
 		entireRoom.Shape.TopLeft = new Vector2I(0, 0);
@@ -181,7 +181,7 @@ public partial class BinarySpacePartitionGenerator : RoomGenerator
 			Grid.Size.Y
 		);
 
-		RoomTree<Rectangle> tree = new RoomTree<Rectangle>();
+		RoomTree tree = new RoomTree();
 		tree.Head = new RoomTreeNode(entireRoom);
 		
 		return tree;
@@ -190,7 +190,7 @@ public partial class BinarySpacePartitionGenerator : RoomGenerator
 	protected override async Task ConnectRooms()
 	{
 		RoomGraph rg = new RoomGraph();
-		Tree.LoadChildrenToGraph(rg);
+		_tree.LoadChildrenToGraph(rg);
 		List<RoomGraphNode> nodes = rg.Nodes.ToList();
 		int nodesMax;
 		foreach (var node in nodes)

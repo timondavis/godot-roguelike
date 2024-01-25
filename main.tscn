@@ -21,11 +21,11 @@ GeneratedMapHeight = 200
 MapGeneratorSequence = [NodePath("BSP Generator"), NodePath("CA Generator")]
 TileAssociationsPath = "res://Asset/TileTypeAssociation/simple-tile-association.json"
 
-[node name="CA Generator" type="Node" parent="Map Builder" node_paths=PackedStringArray("SelectionZones")]
+[node name="CA Generator" type="Node" parent="Map Builder" node_paths=PackedStringArray("SelectedAreas")]
 script = ExtResource("3_1c22k")
-LifeCycles = 1
+LifeCycles = 25
 CycleEmissionDelay = 0.1
-SelectionZones = [NodePath("Rect 1"), NodePath("Rect 2")]
+SelectedAreas = [NodePath("Rect 1"), NodePath("Rect 2")]
 
 [node name="Rect 1" type="Node" parent="Map Builder/CA Generator"]
 script = ExtResource("4_kme4k")
@@ -39,10 +39,10 @@ TopLeft = Vector2i(110, 110)
 Width = 50
 Height = 50
 
-[node name="BSP Generator" type="Node" parent="Map Builder" node_paths=PackedStringArray("SelectionZones")]
+[node name="BSP Generator" type="Node" parent="Map Builder" node_paths=PackedStringArray("SelectedAreas")]
 script = ExtResource("3_4tfxg")
 DivisionDepth = 5
 MinConnectionsPerRoom = 3
 MaxConnectionsPerRoom = 5
 CycleEmissionDelay = 0.1
-SelectionZones = []
+SelectedAreas = []
