@@ -10,6 +10,8 @@
 
 [node name="TileMap" type="TileMap" parent="."]
 scale = Vector2(0.1, 0.1)
+tile_set = ExtResource("2_wjtum")
+rendering_quadrant_size = 1
 format = 2
 
 [node name="Map Builder" type="Node" parent="." node_paths=PackedStringArray("ActiveTileMap", "MapGeneratorSequence")]

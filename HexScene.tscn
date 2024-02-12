@@ -1,0 +1,28 @@
+[gd_scene load_steps=4 format=3 uid="uid://dbv1ovjdty8pf"]
+
+[ext_resource type="Script" path="res://Map/ProceduralMapBuilder.cs" id="1_evt65"]
+[ext_resource type="TileSet" uid="uid://brivwmm071ln1" path="res://Map/TileSet/hexDungeon.tres" id="2_qp7o5"]
+[ext_resource type="Script" path="res://Map/Generator/Rooms/BinarySpacePartitionGenerator.cs" id="3_dpawf"]
+
+[node name="HexScene" type="Node2D"]
+
+[node name="TileMap" type="TileMap" parent="."]
+scale = Vector2(0.2, 0.2)
+format = 2
+
+[node name="MapBuilder" type="Node" parent="TileMap" node_paths=PackedStringArray("ActiveTileMap", "MapGeneratorSequence")]
+script = ExtResource("1_evt65")
+ActiveTileMap = NodePath("..")
+SourceTileSet = ExtResource("2_qp7o5")
+GeneratedMapWidth = 100
+GeneratedMapHeight = 100
+MapGeneratorSequence = [NodePath("BSP Generator")]
+TileAssociationsPath = "res://Asset/TileTypeAssociation/hex-tile-type-associations.json"
+
+[node name="BSP Generator" type="Node" parent="TileMap/MapBuilder" node_paths=PackedStringArray("SelectedAreas")]
+script = ExtResource("3_dpawf")
+DivisionDepth = 7
+MinConnectionsPerRoom = 2
+MaxConnectionsPerRoom = 3
+CycleEmissionDelay = 0.1
+SelectedAreas = []
