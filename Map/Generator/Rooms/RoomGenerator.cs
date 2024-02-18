@@ -2,9 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Godot;
-using Roguelike.Map.Generator.Service;
 using Roguelike.Map.Model;
-using Roguelike.Map.Model.Shapes;
 
 namespace Roguelike.Map.Generator.Rooms;
 

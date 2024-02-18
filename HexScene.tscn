@@ -1,8 +1,10 @@
-[gd_scene load_steps=4 format=3 uid="uid://dbv1ovjdty8pf"]
+[gd_scene load_steps=6 format=3 uid="uid://byqsq6wqyphy2"]
 
 [ext_resource type="Script" path="res://Map/ProceduralMapBuilder.cs" id="1_evt65"]
-[ext_resource type="TileSet" uid="uid://brivwmm071ln1" path="res://Map/TileSet/hexDungeon.tres" id="2_qp7o5"]
+[ext_resource type="TileSet" uid="uid://dce6wu1d4oq8i" path="res://Map/TileSet/hexDungeon.tres" id="2_qp7o5"]
 [ext_resource type="Script" path="res://Map/Generator/Rooms/BinarySpacePartitionGenerator.cs" id="3_dpawf"]
+[ext_resource type="Script" path="res://Map/Generator/CellularAutomataMapGenerator.cs" id="4_84pp0"]
+[ext_resource type="Script" path="res://Map/Model/Shapes/Rectangle.cs" id="5_kcksq"]
 
 [node name="HexScene" type="Node2D"]
 
@@ -16,13 +18,31 @@ ActiveTileMap = NodePath("..")
 SourceTileSet = ExtResource("2_qp7o5")
 GeneratedMapWidth = 100
 GeneratedMapHeight = 100
-MapGeneratorSequence = [NodePath("BSP Generator")]
+MapGeneratorSequence = [NodePath("BSP Generator"), NodePath("Automata Generator")]
 TileAssociationsPath = "res://Asset/TileTypeAssociation/hex-tile-type-associations.json"
 
 [node name="BSP Generator" type="Node" parent="TileMap/MapBuilder" node_paths=PackedStringArray("SelectedAreas")]
 script = ExtResource("3_dpawf")
-DivisionDepth = 7
+DivisionDepth = 3
 MinConnectionsPerRoom = 2
 MaxConnectionsPerRoom = 3
 CycleEmissionDelay = 0.1
 SelectedAreas = []
+
+[node name="Automata Generator" type="Node" parent="TileMap/MapBuilder" node_paths=PackedStringArray("SelectedAreas")]
+script = ExtResource("4_84pp0")
+LifeCycles = 30
+CycleEmissionDelay = 0.3
+SelectedAreas = [NodePath("Shape1"), NodePath("Shape2")]
+
+[node name="Shape1" type="Node" parent="TileMap/MapBuilder/Automata Generator"]
+script = ExtResource("5_kcksq")
+TopLeft = Vector2i(12, 25)
+Width = 100
+Height = 100
+
+[node name="Shape2" type="Node" parent="TileMap/MapBuilder/Automata Generator"]
+script = ExtResource("5_kcksq")
+TopLeft = Vector2i(80, 80)
+Width = 200
+Height = 200

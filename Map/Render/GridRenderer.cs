@@ -6,6 +6,7 @@ using System.Linq;
 using Godot.Collections;
 using Roguelike.Map.Generator;
 using Roguelike.Map.Model;
+using Roguelike.Map.Model.Grid;
 using FileAccess = Godot.FileAccess;
 
 namespace Roguelike.Map.Render;
