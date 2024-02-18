@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Roguelike.Map.Model;
+using Roguelike.Map.Model.Grid;
 using Roguelike.Map.Model.Shapes;
 
 public partial class PathFinder : GodotObject

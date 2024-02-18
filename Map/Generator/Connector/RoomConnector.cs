@@ -1,5 +1,6 @@
 using Godot;
 using Roguelike.Map.Model;
+using Roguelike.Map.Model.Grid;
 using Roguelike.Map.Model.Shapes;
 
 public partial class RoomConnector : GodotObject

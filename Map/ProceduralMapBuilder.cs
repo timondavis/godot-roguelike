@@ -2,7 +2,7 @@ using System;
 using Godot;
 using Godot.Collections;
 using Roguelike.Map.Generator.Service;
-using Roguelike.Map.Model;
+using Roguelike.Map.Model.Grid;
 using Roguelike.Map.Render;
 
 namespace Roguelike.Map.Generator;
@@ -72,15 +72,15 @@ public partial class ProceduralMapBuilder : Node
 		// Initialize the Grid Renderer.
 		_gridRenderer = new GridRenderer(MapGeneratorSequence, TileAssociationsPath);
 		
+		// Assign the given TileSet to the ActiveTileMap.  
+		ActiveTileMap.TileSet = SourceTileSet;
+		
 		// Reset (Initialize) the GeneratorGrid.
 		ResetGrid();
 
 		// Set the 0th ActiveMapGenerator in the MapGeneratorSequence array.  Connect it to the system.
 		ActiveMapGenerator = MapGeneratorSequence[_activeMapGeneratorIndex];
 		ConnectActiveMapGenerator();
-
-		// Assign the given TileSet to the ActiveTileMap.  
-		ActiveTileMap.TileSet = SourceTileSet;
 		
 		// Start work on the first generator (Subsequent generators will be invoked on the OnMapFinalized callback).
 		ActiveMapGenerator.Begin();
@@ -189,7 +189,21 @@ public partial class ProceduralMapBuilder : Node
 	{
 		if (GeneratedMapWidth > 0 && GeneratedMapHeight > 0)
 		{
-			return new GeneratorGrid(new Vector2I( GeneratedMapWidth, GeneratedMapHeight));
+			GeneratorGrid grid;
+			if (ActiveTileMap.TileSet.TileShape == TileSet.TileShapeEnum.Square)
+			{
+				grid = new SquareGeneratorGrid(new Vector2I( GeneratedMapWidth, GeneratedMapHeight));
+			} else if (ActiveTileMap.TileSet.TileShape == TileSet.TileShapeEnum.Hexagon)
+			{
+				grid = new HexGeneratorGrid(new Vector2I(GeneratedMapWidth, GeneratedMapHeight));
+			}
+			else
+			{
+				throw new ArgumentException(
+					"Tileset must be Square or Hexagon based.  More shapes may be supported in the future.");
+			}
+
+			return grid;
 		}
 		else
 		{
