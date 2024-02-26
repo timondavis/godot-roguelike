@@ -3,11 +3,15 @@ using System.Collections.Generic;
 using System.Security.AccessControl;
 using Godot;
 using Godot.NativeInterop;
+using Roguelike.Map.Model.Direction;
+using Roguelike.Map.Model.Direction.Pattern;
 
-namespace Roguelike.Map.Model;
+namespace Roguelike.Map.Model.Grid;
 
-public partial class GeneratorGrid : GodotObject
+public abstract partial class GeneratorGrid : GodotObject
 {
+	public TileSet.TileShapeEnum TileShape;
+	
 	// The width and height of the grid
 	public Vector2I Size { get; private set; }
 	
@@ -17,19 +21,6 @@ public partial class GeneratorGrid : GodotObject
 	// We have a pointer to index the position for traversal.
 	public GridCell Current { get; private set; }
 
-	public enum Direction
-	{
-		North = 0,
-		NorthEast,
-		East,
-		SouthEast,
-		South,
-		SouthWest,
-		West,
-		NorthWest,
-		Here
-	};
-
 	public GeneratorGrid(Vector2I size)
 	{
 		Size = size;
@@ -37,7 +28,7 @@ public partial class GeneratorGrid : GodotObject
 		InitializeGrid();
 		Current = GridCells[0, 0];
 	}
-	
+
 	/// <summary>
 	/// Adjusts the position based on the given direction.
 	/// </summary>
@@ -45,48 +36,7 @@ public partial class GeneratorGrid : GodotObject
 	/// <param name="direction">The direction to move</param>
 	/// <returns>The adjusted position</returns>
 	/// <exception cref="ArgumentException">Thrown when an invalid direction is provided</exception>
-	public static Vector2I AdjustPositionByDirection(Vector2I position, Direction direction)
-	{
-		Vector2I newPosition = new Vector2I(position.X, position.Y);
-
-		switch (direction)
-		{
-			case Direction.North:
-				newPosition.Y -= 1;
-				break;
-			case Direction.NorthEast:
-				newPosition.Y -= 1;
-				newPosition.X += 1;
-				break;
-			case Direction.East:
-				newPosition.X += 1;
-				break;
-			case Direction.SouthEast:
-				newPosition.Y += 1;
-				newPosition.X += 1;
-				break;
-			case Direction.South:
-				newPosition.Y += 1;
-				break;
-			case Direction.SouthWest:
-				newPosition.Y += 1;
-				newPosition.X -= 1;
-				break;
-			case Direction.West:
-				newPosition.X -= 1;
-				break;
-			case Direction.NorthWest:
-				newPosition.Y -= 1;
-				newPosition.X -= 1;
-				break;
-			case Direction.Here:
-				break;
-			default:
-				throw new ArgumentException(nameof(direction));
-		}
-		
-		return newPosition;
-	}
+	public abstract Vector2I AdjustPositionByDirection(Vector2I position, GridDirection direction);
 
 	/// <summary>
 	/// Moves the `Current` GridCell pointer to the specified target position.
@@ -187,7 +137,7 @@ public partial class GeneratorGrid : GodotObject
 	/// <param name="safeValuesOnly">If true, unsafe values will be clamped into range. If false (default),
 	/// null is returned for cells outside of range</param>
 	/// <returns>The queried grid cell if safe position, or null otherwise.</returns>
-	public GridCell RelativeQuery(Direction direction, bool safeValuesOnly = false)
+	public GridCell RelativeQuery(GridDirection direction, bool safeValuesOnly = false)
 	{
 		Vector2I newPosition;
 		if (safeValuesOnly)
@@ -203,21 +153,26 @@ public partial class GeneratorGrid : GodotObject
 			GridCells[newPosition.X, newPosition.Y] : 
 			null;
 	}
-
+	
 	/// <summary>
 	/// Retrieves the adjacent GridCells in the specified directions.
 	/// </summary>
 	/// <param name="directionSet">The set of directions representing the adjacent cells to query.</param>
 	/// <returns>A Dictionary containing the direction as the key and the corresponding GridCell as the value.  Cells which are out of grid range are returned as nulls.</returns>
-	public Godot.Collections.Dictionary<Direction, GridCell> RelativeQuery(HashSet<Direction> directionSet)
+	public Godot.Collections.Dictionary<GridDirection, GridCell> RelativeQuery(HashSet<GridDirection> directionSet)
 	{
-		var results = new Godot.Collections.Dictionary<Direction, GridCell>();
-		foreach (Direction direction in directionSet)
+		var results = new Godot.Collections.Dictionary<GridDirection, GridCell>();
+		foreach (GridDirection direction in directionSet)
 		{
 			results.Add(direction, RelativeQuery(direction));
 		}
 
 		return results;
+	}
+
+	public Godot.Collections.Dictionary<GridDirection, GridCell> RelativeQuery(DirectionalPattern directionalPattern)
+	{
+		return RelativeQuery(directionalPattern.Pattern);
 	}
 	
 	/// <summary>
@@ -283,7 +238,7 @@ public partial class GeneratorGrid : GodotObject
 	/// <param name="position">The original position</param>
 	/// <param name="direction">The direction of adjustment</param>
 	/// <returns>The adjusted position as a Vector2I</returns>
-	protected Vector2I SafeAdjustPositionByDirection(Vector2I position, Direction direction)
+	protected Vector2I SafeAdjustPositionByDirection(Vector2I position, GridDirection direction)
 	{
 		Vector2I adjusted = AdjustPositionByDirection(position, direction);
 		return SafePosition(adjusted);

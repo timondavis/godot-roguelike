@@ -1,22 +1,26 @@
 using System.Collections.Generic;
-using System.Net.Sockets;
 using Godot;
+using Roguelike.Map.Model;
+using Roguelike.Map.Model.Shapes;
 
 namespace Roguelike.Map.Generator.Path;
 
-public class RoomGraphNode<T> where T : Model.Room
+public class RoomGraphNode
 {
-   public HashSet<RoomGraphNode<T>> ConnectedNodes { get; private set; }
-   public T Room { get; private set; }
+   public HashSet<RoomGraphNode> ConnectedNodes { get; private set; }
+   public Room Room{ get; private set; }
 
    public Vector2I Position
    {
-      get { return Room.Center; }
+      get
+      {
+         return Room.Location;
+      }
    }
 
-   public RoomGraphNode(T room)
+   public RoomGraphNode(Room room)
    {
-      ConnectedNodes = new HashSet<RoomGraphNode<T>>();
+      ConnectedNodes = new HashSet<RoomGraphNode>();
       Room = room;
    }
 }

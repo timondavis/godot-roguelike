@@ -1,16 +1,18 @@
 using System.Collections.Generic;
+using Roguelike.Map.Model.Shapes;
+
 namespace Roguelike.Map.Generator.Path;
 
-class RoomTree<T> where T : Model.Room
+class RoomTree 
 {
-    public RoomTreeNode<T> Head = null;
+    public RoomTreeNode Head = null;
 
-    public void LoadChildrenToGraph(RoomGraph<T> graph)
+    public void LoadChildrenToGraph(RoomGraph graph)
     {
         LoadChildrenToGraph(graph, Head);
     }
     
-    private void LoadChildrenToGraph(RoomGraph<T> graph, RoomTreeNode<T> node)
+    private void LoadChildrenToGraph(RoomGraph graph, RoomTreeNode node)
     {
         if (node.Left == null && node.Right == null)
         {
@@ -29,14 +31,14 @@ class RoomTree<T> where T : Model.Room
         } 
     }
 
-    public List<RoomTreeNode<T>> GetChildren()
+    public List<RoomTreeNode> GetChildren()
     {
-        List<RoomTreeNode<T>> childList = new List<RoomTreeNode<T>>();
+        List<RoomTreeNode> childList = new List<RoomTreeNode>();
         SeekChildren(childList, Head);
         return childList;
     }
 
-    private void SeekChildren(List<RoomTreeNode<T>> childList, RoomTreeNode<T> node)
+    private void SeekChildren(List<RoomTreeNode> childList, RoomTreeNode node)
     {
         if (node.Left == null && node.Right == null)
         {

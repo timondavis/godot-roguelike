@@ -1,6 +1,10 @@
 using System;
 using System.Collections.Generic;
 using Godot;
+using Roguelike.Map.Generator.Service;
+using Roguelike.Map.Model.Direction;
+using Roguelike.Map.Model.Direction.Pattern;
+using Roguelike.Map.Model.Grid;
 
 namespace Roguelike.Map.Generator;
 
@@ -25,24 +29,20 @@ public partial class CellularAutomataMapGenerator : Roguelike.Map.Generator.MapG
 	public int MinNeighborsForNewLife = 3;
 	[Export] 
 	public int MaxNeighborsForNewLife = 3;
+	
+	private DirectionalPatternFactory _patternFactory = new DirectionalPatternFactory();
 
 	public CellularAutomataMapGenerator() : base()
 	{
 		TileTypes.Add(new Model.TileType { Name=TileType_Floor } );
 	}
-
-	public override void _Ready()
-	{
-		base._Ready();
-		GenerateGrid();
-	}
+	
 
 	/// <summary>
 	/// Generates a grid for the map.
 	/// </summary>
-	public override void GenerateGrid()
+	public override void Begin()
 	{
-		InitializeGrid();
 		var numberOfStartPoints = HowManyStartPoints();
 		GenerateStartPoints(numberOfStartPoints);
 		var active = Grid.QueryActiveCells();
@@ -81,7 +81,11 @@ public partial class CellularAutomataMapGenerator : Roguelike.Map.Generator.MapG
 		{
 			for (int y = 0; y < Grid.Size.Y; y++)
 			{
-				AssessCellLife(ref lifeTracker, new Vector2I(x, y));
+				var position = new Vector2I(x, y);
+				if (SelectionService.Instance.IsPositionSelected(position))
+				{
+					AssessCellLife(ref lifeTracker, position);
+				}
 			}
 		}
 
@@ -146,8 +150,10 @@ public partial class CellularAutomataMapGenerator : Roguelike.Map.Generator.MapG
 	{
 		int x, y;
 
-		HashSet<Model.GeneratorGrid.Direction> starPattern = GetStarPattern();
-		HashSet<Model.GeneratorGrid.Direction> plusPattern = GetPlusPattern();
+		HashSet<GridDirection> starPattern = 
+			_patternFactory.Generate(Grid.TileShape, DirectionalPatternEnum.Star).Pattern;
+		HashSet<GridDirection> plusPattern =
+			_patternFactory.Generate(Grid.TileShape, DirectionalPatternEnum.Plus).Pattern;
 		
 		// Just in case we can't find any more unique values, set a threshold and count failed attempts
 		// To generate Unique values.
@@ -158,15 +164,19 @@ public partial class CellularAutomataMapGenerator : Roguelike.Map.Generator.MapG
 			y = (int)GD.RandRange(0, Height);
 			Grid.MoveTo(new Vector2I(x, y));
 
-			Godot.Collections.Dictionary<Model.GeneratorGrid.Direction, Model.GridCell> cells;
+			Godot.Collections.Dictionary<GridDirection, Model.GridCell> cells;
 
 			if (i % 2 == 0)
 			{
-				cells = Grid.RelativeQuery(starPattern);
+				cells = Grid.RelativeQuery( 
+					_patternFactory.Generate(Grid.TileShape, DirectionalPatternEnum.Star) 
+				);
 			}
 			else
 			{
-				cells = Grid.RelativeQuery(plusPattern);
+				cells = Grid.RelativeQuery( 
+					_patternFactory.Generate(Grid.TileShape, DirectionalPatternEnum.Plus)
+				);
 			}
 			
 			foreach (var cell in cells)
@@ -189,7 +199,10 @@ public partial class CellularAutomataMapGenerator : Roguelike.Map.Generator.MapG
 		}
 
 		Grid.MoveTo(targetPosition);
-		var results = Grid.RelativeQuery(GetSurroundPattern());
+		var results = Grid.RelativeQuery(
+			_patternFactory.Generate(
+				Grid.TileShape, DirectionalPatternEnum.Surround)
+			);
 		foreach (var result in results)
 		{
 			if (result.Value != null)
@@ -200,44 +213,4 @@ public partial class CellularAutomataMapGenerator : Roguelike.Map.Generator.MapG
 
 		return activeCount;
 	}
-
-	private HashSet<Model.GeneratorGrid.Direction> GetStarPattern()
-	{
-		return new HashSet<Model.GeneratorGrid.Direction>
-		{
-			Model.GeneratorGrid.Direction.Here,
-			Model.GeneratorGrid.Direction.NorthWest,
-			Model.GeneratorGrid.Direction.NorthEast,
-			Model.GeneratorGrid.Direction.SouthWest,
-			Model.GeneratorGrid.Direction.SouthEast,
-		}; 
-	}
-
-	private HashSet<Model.GeneratorGrid.Direction> GetPlusPattern()
-	{
-		return new HashSet<Model.GeneratorGrid.Direction>
-		{
-			Model.GeneratorGrid.Direction.Here,
-			Model.GeneratorGrid.Direction.East,
-			Model.GeneratorGrid.Direction.South,
-			Model.GeneratorGrid.Direction.West,
-			Model.GeneratorGrid.Direction.North
-		}; 
-	}
-
-	private HashSet<Model.GeneratorGrid.Direction> GetSurroundPattern()
-	{
-		return new HashSet<Model.GeneratorGrid.Direction>
-		{
-			Model.GeneratorGrid.Direction.North,
-			Model.GeneratorGrid.Direction.NorthEast,
-			Model.GeneratorGrid.Direction.East,
-			Model.GeneratorGrid.Direction.SouthEast,
-			Model.GeneratorGrid.Direction.South,
-			Model.GeneratorGrid.Direction.SouthWest,
-			Model.GeneratorGrid.Direction.West,
-			Model.GeneratorGrid.Direction.NorthWest,
-		};
-	}
-
 }
