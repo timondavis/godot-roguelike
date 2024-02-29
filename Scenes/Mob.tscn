@@ -1,10 +1,15 @@
-[gd_scene load_steps=3 format=3 uid="uid://c7y1gpbtru2nt"]
+[gd_scene load_steps=4 format=3 uid="uid://c7y1gpbtru2nt"]
 
 [ext_resource type="Script" path="res://Actor/Character/Mob.cs" id="1_wcvv2"]
 [ext_resource type="Texture2D" uid="uid://bx0i52v1fkkde" path="res://Asset/Character/monster.png" id="2_toyux"]
+[ext_resource type="Script" path="res://Game/MobStrategy.cs" id="3_1fvxk"]
 
-[node name="Mob" type="Node2D"]
+[node name="Mob" type="Node2D" node_paths=PackedStringArray("Strategy")]
 script = ExtResource("1_wcvv2")
+Strategy = NodePath("MobStrategy")
 DetailedView = ExtResource("2_toyux")
 WorldView = ExtResource("2_toyux")
-Name = "Monster"
+ActorName = "Slime"
+
+[node name="MobStrategy" type="Node" parent="."]
+script = ExtResource("3_1fvxk")

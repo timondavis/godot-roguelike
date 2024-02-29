@@ -7,6 +7,9 @@ public partial class ActorStat : Node
 {
 	[Export] 
 	public string StatName { get; set; }
+	
+	[Export]
+	public string Abbreviation { get; set; }
 
 	[Export] 
 	public int MinValue { get; set; }

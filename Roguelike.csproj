@@ -8,4 +8,8 @@
   <ItemGroup>
     <Folder Include="Map\Render\" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Game\Config\CharacterStats.json" />
+    <Content Include="Game\Config\ItemStats.json" />
+  </ItemGroup>
 </Project>

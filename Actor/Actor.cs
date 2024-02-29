@@ -1,6 +1,5 @@
 using Godot;
 using Roguelike.Actor.Stats;
-using System;
 using Godot.Collections;
 
 namespace Roguelike.Actor;
@@ -18,5 +17,5 @@ public partial class Actor : Node
 
 	public ActorStatCollection Stats { get; set; }
 	
-	public Dictionary<Stats.ActorStat, int> StatValues = new Dictionary<ActorStat, int>();
+	public Dictionary<ActorStat, int> StatValues = new Dictionary<ActorStat, int>();
 }
