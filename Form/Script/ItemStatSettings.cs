@@ -1,23 +1,23 @@
-using System.Text.Json;
 using Godot;
+using System.Text.Json;
 using Godot.Collections;
 
 namespace Roguelike.Form.Script;
 
-public partial class CharacterStatSetttings : Control
+public partial class ItemStatSettings : Control
 {
 	private const string FilePath = "user://game-config.json";
 	private const string FormRowScenePath = "res://Form/Control/FieldNameRow.tscn";
 	private const string FormRowContainerPath = "FormLayout/FieldContainer/Content/Rows";
 	private const string ConfigSection = "GameConfig";
-	private const string CharacterStats = "CharacterStat";
+	private const string ItemStats = "ItemStats";
 	
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
 		var file = new Godot.ConfigFile();
 		file.Load(FilePath);
-		var statNamesString = file.GetValue(ConfigSection, CharacterStats).AsString();
+		var statNamesString = file.GetValue(ConfigSection, ItemStats).AsString();
 		var statNames = JsonSerializer.Deserialize<Array<string>>(statNamesString);	
 		foreach (string statName in statNames)
 		{
@@ -118,7 +118,7 @@ public partial class CharacterStatSetttings : Control
 		string json = JsonSerializer.Serialize(statNames);
 
 		var file = new Godot.ConfigFile();
-		file.SetValue(ConfigSection, CharacterStats, json);
+		file.SetValue(ConfigSection, ItemStats, json);
 		file.Save(FilePath);
 	}
 
