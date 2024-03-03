@@ -1,0 +1,11 @@
+[gd_resource type="Theme" load_steps=3 format=3 uid="uid://b2pvhle4c1v4n"]
+
+[sub_resource type="SystemFont" id="SystemFont_sceus"]
+
+[sub_resource type="FontVariation" id="FontVariation_vqgac"]
+base_font = SubResource("SystemFont_sceus")
+
+[resource]
+Label/font_sizes/font_size = 40
+Label/fonts/font = SubResource("FontVariation_vqgac")
+LineEdit/font_sizes/font_size = 36

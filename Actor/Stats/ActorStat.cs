@@ -6,17 +6,7 @@ namespace Roguelike.Actor.Stats;
 public partial class ActorStat : Node
 {
 	[Export] 
-	public string StatName { get; set; }
+	public string StatkName { get; set; }
 	
-	[Export]
-	public string Abbreviation { get; set; }
-
-	[Export] 
-	public int MinValue { get; set; }
-
-	[Export]
-	public int MaxValue { get; set; }
-	
-	[Export]
-	public int DefaultValue { get; set; }
+	public int Value { get; set; }
 }

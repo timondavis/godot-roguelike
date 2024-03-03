@@ -7,5 +7,5 @@ namespace Roguelike.Actor.Stats;
 
 public partial class ActorStatCollection : Node
 {
-	[Export] public Array<ActorStat> Stats;
+	public Array<ActorStat> Stats;
 }
