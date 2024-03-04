@@ -1,7 +1,5 @@
-using System.Collections.Generic;
 using Godot;
-using Godot.Bridge;
-using Roguelike.Actor.Stats;
+using Roguelike.Form.Script;
 using Roguelike.Game;
 using Roguelike.Game.Service;
 using Roguelike.Game.Service.Configuration;
@@ -19,4 +17,10 @@ public partial class Mob : Character
 	
 	[Export] 
 	public MobStrategy Strategy { get; set; }
+
+	public override void _Ready()
+	{
+		MobStatValues childNode = GetNode<MobStatValues>("MobStatValuesForm");
+		childNode.PopulateStatValues(ActorName);
+	}
 }

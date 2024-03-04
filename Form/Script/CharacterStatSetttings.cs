@@ -118,6 +118,7 @@ public partial class CharacterStatSetttings : Control
 		string json = JsonSerializer.Serialize(statNames);
 
 		var file = new Godot.ConfigFile();
+		file.Load(FilePath);
 		file.SetValue(ConfigSection, CharacterStats, json);
 		file.Save(FilePath);
 	}
