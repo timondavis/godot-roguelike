@@ -1,4 +1,5 @@
 using Godot;
+using Roguelike.Actor.Stats;
 using Roguelike.Form.Script.CharacterValues;
 using Roguelike.Game;
 using Roguelike.Game.Service;
@@ -8,9 +9,14 @@ namespace Roguelike.Actor.Character;
 
 public partial class Mob : Character
 {
-	private StatsConfigurationService _statsService;
-	private MobStatValues _statsValues;
+	protected ActorStatValues MobTemplateStats;
+	
+	public ActorStatValues MobCurrentStats;
 
+	[Export] public MobStatValues Form;
+	
+	private StatsConfigurationService _statsService;
+	
 	public Mob() : base()
 	{
 		_statsService = GameServices.Instance.Stats;
@@ -21,7 +27,8 @@ public partial class Mob : Character
 
 	public override void _Ready()
 	{
-		MobStatValues childNode = GetNode<MobStatValues>("StatForm");
-		childNode.InitializeMobForm(ActorName);
+		MobCurrentStats = _statsService.LoadMobStats(ActorName);
+		MobTemplateStats = _statsService.LoadMobStats(ActorName);
+		Form.InitializeMobForm(ActorName);
 	}
 }
