@@ -1,0 +1,47 @@
+[gd_scene load_steps=2 format=3 uid="uid://dnapui3g8bw5t"]
+
+[ext_resource type="Theme" uid="uid://b2pvhle4c1v4n" path="res://Form/Theme/FormTheme.tres" id="1_8bktq"]
+
+[node name="StatValueRow" type="VBoxContainer"]
+
+[node name="MarginTop" type="Control" parent="."]
+custom_minimum_size = Vector2(2.08165e-12, 10)
+layout_mode = 2
+
+[node name="Cols" type="HBoxContainer" parent="."]
+custom_minimum_size = Vector2(1000, 2.08165e-12)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="FieldLabelContainer" type="MarginContainer" parent="Cols"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="FieldLabel" type="Label" parent="Cols/FieldLabelContainer"]
+layout_mode = 2
+theme = ExtResource("1_8bktq")
+text = "Field Name"
+horizontal_alignment = 2
+
+[node name="Spacer" type="MarginContainer" parent="Cols"]
+custom_minimum_size = Vector2(30, 2.08165e-12)
+layout_mode = 2
+
+[node name="FieldInputContainer" type="MarginContainer" parent="Cols"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="FieldValue" type="LineEdit" parent="Cols/FieldInputContainer"]
+layout_mode = 2
+theme = ExtResource("1_8bktq")
+
+[node name="Spacer2" type="MarginContainer" parent="Cols"]
+custom_minimum_size = Vector2(30, 2.08165e-12)
+layout_mode = 2
+
+[node name="MarginBottom" type="Control" parent="."]
+custom_minimum_size = Vector2(2.08165e-12, 10)
+layout_mode = 2
+
+[node name="FieldNameRow" type="Control" parent="."]
+layout_mode = 2

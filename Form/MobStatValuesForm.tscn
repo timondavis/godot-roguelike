@@ -1,0 +1,107 @@
+[gd_scene load_steps=2 format=3 uid="uid://cmtpxktxu3mdo"]
+
+[ext_resource type="Theme" uid="uid://b2pvhle4c1v4n" path="res://Form/Theme/FormTheme.tres" id="2_uim8d"]
+
+[node name="MobStatValuesForm" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="FormLayout" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.05
+anchor_top = 0.45
+anchor_right = 0.95
+anchor_bottom = 0.55
+offset_top = -250.0
+offset_bottom = 250.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Heading" type="Control" parent="FormLayout"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="FormLayout/Heading"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+theme_override_font_sizes/font_size = 45
+text = "Mob Stat Values"
+
+[node name="FieldContainer" type="ScrollContainer" parent="FormLayout"]
+custom_minimum_size = Vector2(2.08165e-12, 400)
+layout_mode = 2
+
+[node name="Content" type="MarginContainer" parent="FormLayout/FieldContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Rows" type="VBoxContainer" parent="FormLayout/FieldContainer/Content"]
+layout_mode = 2
+
+[node name="Row" type="VBoxContainer" parent="FormLayout/FieldContainer/Content/Rows"]
+layout_mode = 2
+
+[node name="MarginTop" type="Control" parent="FormLayout/FieldContainer/Content/Rows/Row"]
+custom_minimum_size = Vector2(2.08165e-12, 10)
+layout_mode = 2
+
+[node name="Cols" type="HBoxContainer" parent="FormLayout/FieldContainer/Content/Rows/Row"]
+custom_minimum_size = Vector2(1000, 2.08165e-12)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="FieldLabelContainer" type="MarginContainer" parent="FormLayout/FieldContainer/Content/Rows/Row/Cols"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="FieldLabel" type="Label" parent="FormLayout/FieldContainer/Content/Rows/Row/Cols/FieldLabelContainer"]
+layout_mode = 2
+theme = ExtResource("2_uim8d")
+text = "Field Name"
+horizontal_alignment = 2
+
+[node name="Spacer" type="MarginContainer" parent="FormLayout/FieldContainer/Content/Rows/Row/Cols"]
+custom_minimum_size = Vector2(30, 2.08165e-12)
+layout_mode = 2
+
+[node name="FieldInputContainer" type="MarginContainer" parent="FormLayout/FieldContainer/Content/Rows/Row/Cols"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="FieldValue" type="LineEdit" parent="FormLayout/FieldContainer/Content/Rows/Row/Cols/FieldInputContainer"]
+layout_mode = 2
+theme = ExtResource("2_uim8d")
+
+[node name="Spacer2" type="MarginContainer" parent="FormLayout/FieldContainer/Content/Rows/Row/Cols"]
+custom_minimum_size = Vector2(30, 2.08165e-12)
+layout_mode = 2
+
+[node name="MarginBottom" type="Control" parent="FormLayout/FieldContainer/Content/Rows/Row"]
+custom_minimum_size = Vector2(2.08165e-12, 10)
+layout_mode = 2
+
+[node name="FieldNameRow" type="Control" parent="FormLayout/FieldContainer/Content/Rows/Row"]
+layout_mode = 2
+
+[node name="Buttons" type="Control" parent="FormLayout"]
+layout_direction = 3
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="FormLayout/Buttons"]
+layout_mode = 1
+offset_right = 240.0
+offset_bottom = 50.0
+
+[node name="SaveButton" type="Button" parent="FormLayout/Buttons/HBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "Save"
+
+[connection signal="pressed" from="FormLayout/Buttons/HBoxContainer/SaveButton" to="." method="_on_save_button_pressed"]
