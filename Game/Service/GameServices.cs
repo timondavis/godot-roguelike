@@ -10,15 +10,18 @@ public class GameServices
 	{
 	}
 
-	public static GameServices Instance()
+	public static GameServices Instance
 	{
-		if (_instance == null)
+		get
 		{
-			_instance = new GameServices();
-		}
+			if (_instance == null)
+			{
+				_instance = new GameServices();
+			}
 
-		return _instance;
+			return _instance;
+		}
 	}
 
-	public StatsConfigurationService StatsConfiguration => StatsConfigurationService.Instance();
+	public StatsConfigurationService Stats => StatsConfigurationService.Instance;
 }

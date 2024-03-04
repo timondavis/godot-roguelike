@@ -5,8 +5,5 @@ namespace Roguelike.Actor.Stats;
 
 public partial class ActorStat : Node
 {
-	[Export] 
-	public string StatkName { get; set; }
-	
-	public int Value { get; set; }
+	public string StatName { get; set; }
 }

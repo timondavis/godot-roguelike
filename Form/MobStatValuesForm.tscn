@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://cmtpxktxu3mdo"]
 
-[ext_resource type="Script" path="res://Form/Script/MobStatValues.cs" id="1_obrdw"]
+[ext_resource type="Script" path="res://Form/Script/CharacterValues/MobStatValues.cs" id="1_mq55a"]
 
 [node name="MobStatValuesForm" type="Control"]
 layout_mode = 3
@@ -9,7 +9,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_obrdw")
+script = ExtResource("1_mq55a")
 
 [node name="FormLayout" type="VBoxContainer" parent="."]
 layout_mode = 1

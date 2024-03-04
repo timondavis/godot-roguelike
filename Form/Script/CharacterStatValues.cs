@@ -1,28 +1,26 @@
-using System.Collections.Generic;
 using Godot;
-using System.Text.Json;
-using Godot.Collections;
+using Roguelike.Actor.Stats;
+using Roguelike.Game.Service;
 
 namespace Roguelike.Form.Script;
 
-public partial class MobStatValues : Node
+public abstract partial class CharacterStatValues : Node
 {
-	private const string FilePath = "user://game-config.json";
+	private const string FilePath = "user://game-config.cfg";
 	private const string FormRowScenePath = "res://Form/Control/StatValueRow.tscn";
 	private const string FormRowContainerPath = "FormLayout/FieldContainer/Content/Rows";
 	private const string FormButtonPath = "FormLayout/Buttons/ButtonContainer/SaveButton";
 	private const string ConfigSection = "GameConfig";
 	private const string CharacterStats = "CharacterStat";
-	private const string MobStatDefs = "MobStatDefs";
-	private const string MobStatValuesPrefix = "MobStatValues_";
-	private const string LineEditChangedEvent = "text_changed";
+	protected const string MobStatDefs = "MobStatDefs";
+	protected const string PlayerStatDefs = "PlayerStatDefs";
+	protected const string MobStatValuesPrefix = "MobStatValues_";
+	protected const string PlayerStatValues = "PlayerStatvalues";
+	protected const string LineEditChangedEvent = "text_changed";
 
-	[Signal]
-	public delegate void RequestMobNameEventHandler();
-	
-	private Array<string> _statNames;
-	private Godot.Collections.Dictionary<string, string> _statValues;
-	private string _mobName;
+	protected ActorStatCollection Stats = new ActorStatCollection();
+	protected ActorStatValues StatValues = new ActorStatValues();
+	private string _mobName = "";
 	
 	private Button SaveButton
 	{
@@ -31,50 +29,11 @@ public partial class MobStatValues : Node
 			return GetNode<Button>(FormButtonPath);
 		}
 	}
-	
-	public MobStatValues() : base()
-	{
-		_statNames = new Array<string>();
-		_statValues = new Godot.Collections.Dictionary<string, string>();
-	}
-	
+
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
 		SaveButton.Disabled = true;
-	}
-	
-		
-	public void PopulateStatValues(string mobName)
-	{
-		var file = new ConfigFile();
-		file.Load(FilePath);
-		
-		var statNamesString = file.GetValue(ConfigSection, CharacterStats).AsString();
-		_statNames = JsonSerializer.Deserialize<Array<string>>(statNamesString);	
-		
-		var statValuesString = file.GetValue(MobStatDefs, MobStatValuesPrefix + _mobName, "").AsString();
-		if (statValuesString.Trim() != "")
-		{
-			_statValues = JsonSerializer.Deserialize<Godot.Collections.Dictionary<string,string>>(statValuesString);
-		}
-		
-		foreach (string statName in _statNames)
-		{
-			var newRow = GenerateFormRowInstance();
-			var rowsContainer = GetFormRowsContainer();
-			rowsContainer.AddChild(newRow);
-			AttachListenerForRow(newRow);
-			SetLabelForRow(newRow, statName);
-
-			string value;
-			_statValues.TryGetValue(statName, out value);
-
-			if (value != null && value.Trim() != "" && int.TryParse(value, out _))
-			{
-				SetValueForRow(newRow, value);
-			}
-		}
 	}
 
 	public void on_line_edit_changed(string newValue)
@@ -82,9 +41,28 @@ public partial class MobStatValues : Node
 		ValidateState();
 	}
 
-	public void on_save_button_pressed()
+	public abstract void on_save_button_pressed();
+		
+	protected void PopulateStatValues(string mobName)
 	{
-		SaveValues();
+		_mobName = mobName;
+		Stats = GameServices.Instance.Stats.CharacterStatCollection;
+		StatValues = GameServices.Instance.Stats.LoadMobStats(_mobName);
+		
+		foreach (ActorStat stat in Stats.Stats)
+		{
+			var newRow = GenerateFormRowInstance();
+			var rowsContainer = GetFormRowsContainer();
+			rowsContainer.AddChild(newRow);
+			AttachListenerForRow(newRow);
+			SetLabelForRow(newRow, stat.StatName);
+
+			int value;
+			if (StatValues != null && StatValues.TryGetValue(stat.StatName, out value))
+			{
+				SetValueForRow(newRow, value.ToString());
+			}
+		}
 	}
 	
 	private VBoxContainer GenerateFormRowInstance()
@@ -120,27 +98,22 @@ public partial class MobStatValues : Node
 
 	private void CollectStatValues()
 	{
-		Godot.Collections.Dictionary<string, string> values = new Godot.Collections.Dictionary<string, string>();
+		ActorStatValues values = new ActorStatValues();
 		VBoxContainer rowsContainer = GetFormRowsContainer();
 		foreach (VBoxContainer row in rowsContainer.GetChildren())
 		{
 			Label fieldLabel = row.GetChild(1).GetChild(0).GetChild<Label>(0);
 			LineEdit fieldValue = row.GetChild(1).GetChild(2).GetChild<LineEdit>(0);
-			values[fieldLabel.Text] = fieldValue.Text;
+			int valueFound;
+			if (int.TryParse(fieldValue.Text, out valueFound))
+			{
+				values[fieldLabel.Text] = valueFound;
+			}
 		}
 
-		_statValues = values;
+		StatValues = values;
 	}
-	
-	public void SaveValues()
-	{
-		string json = JsonSerializer.Serialize(_statValues);
 
-		var file = new Godot.ConfigFile();
-		file.Load(FilePath);
-		file.SetValue(MobStatDefs, MobStatValuesPrefix + _mobName, json);
-		file.Save(FilePath);
-	}
 
 	private void ValidateState()
 	{
@@ -157,9 +130,11 @@ public partial class MobStatValues : Node
 
 	private bool IsStateValid()
 	{
-		foreach (KeyValuePair<string, string> pair in _statValues)
+		VBoxContainer rowsContainer = GetFormRowsContainer();
+		foreach (VBoxContainer row in rowsContainer.GetChildren())
 		{
-			if (pair.Value.Trim() == "" || ! int.TryParse(pair.Value, out _))
+			LineEdit fieldValue = row.GetChild(1).GetChild(2).GetChild<LineEdit>(0);
+			if (fieldValue.Text.Trim() == "" || ! int.TryParse(fieldValue.Text, out _))
 			{
 				return false;
 			}

@@ -5,9 +5,8 @@
 [ext_resource type="Script" path="res://Game/MobStrategy.cs" id="3_1fvxk"]
 [ext_resource type="PackedScene" uid="uid://cmtpxktxu3mdo" path="res://Form/MobStatValuesForm.tscn" id="3_4cmx6"]
 
-[node name="Mob" type="Node2D" node_paths=PackedStringArray("Strategy")]
+[node name="Mob" type="Node2D"]
 script = ExtResource("1_wcvv2")
-Strategy = NodePath("MobStrategy")
 DetailedView = ExtResource("2_toyux")
 WorldView = ExtResource("2_toyux")
 ActorName = "Slime"
@@ -15,7 +14,7 @@ ActorName = "Slime"
 [node name="MobStrategy" type="Node" parent="."]
 script = ExtResource("3_1fvxk")
 
-[node name="MobStatValuesForm" parent="." instance=ExtResource("3_4cmx6")]
+[node name="StatForm" parent="." instance=ExtResource("3_4cmx6")]
 custom_minimum_size = Vector2(1000, 600)
 anchors_preset = 0
 anchor_right = 0.0

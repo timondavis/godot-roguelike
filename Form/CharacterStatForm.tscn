@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://2npwp14j536v"]
 
-[ext_resource type="Script" path="res://Form/Script/CharacterStatSetttings.cs" id="1_eewag"]
+[ext_resource type="Script" path="res://Form/Script/CharacterStatSettings.cs" id="1_eewag"]
 
 [node name="CharacterStatForm" type="Control"]
 layout_mode = 3

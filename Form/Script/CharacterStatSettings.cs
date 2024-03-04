@@ -1,30 +1,27 @@
-using System.Text.Json;
 using Godot;
 using Godot.Collections;
+using Roguelike.Actor.Stats;
+using Roguelike.Game.Service;
 
 namespace Roguelike.Form.Script;
 
-public partial class CharacterStatSetttings : Control
+public partial class CharacterStatSettings : Control
 {
-	private const string FilePath = "user://game-config.json";
 	private const string FormRowScenePath = "res://Form/Control/FieldNameRow.tscn";
 	private const string FormRowContainerPath = "FormLayout/FieldContainer/Content/Rows";
-	private const string ConfigSection = "GameConfig";
-	private const string CharacterStats = "CharacterStat";
+
+	private ActorStatCollection StatsCollection = new ActorStatCollection();
 	
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		var file = new Godot.ConfigFile();
-		file.Load(FilePath);
-		var statNamesString = file.GetValue(ConfigSection, CharacterStats).AsString();
-		var statNames = JsonSerializer.Deserialize<Array<string>>(statNamesString);	
-		foreach (string statName in statNames)
+		StatsCollection = GameServices.Instance.Stats.CharacterStatCollection;
+		foreach (ActorStat stat in StatsCollection.Stats)
 		{
 			var newRow = GenerateFormRowInstance();
 			var rowsContainer = GetFormRowsContainer();
 			rowsContainer.AddChild(newRow);
-			SetValueForRow(newRow, statName);
+			SetValueForRow(newRow, stat.StatName);
 		}
 	}
 
@@ -45,7 +42,17 @@ public partial class CharacterStatSetttings : Control
 	public void _on_save_button_pressed()
 	{
 		Array<string> fieldvalues = GatherStatNamesFromForm();
-		WriteCharacterStatNames(fieldvalues);
+		Array<ActorStat> actorStats = new Array<ActorStat>();
+		foreach (string name in fieldvalues)
+		{
+			ActorStat newStat = new ActorStat();
+			newStat.StatName = name;
+			actorStats.Add(newStat);
+		}
+
+		StatsCollection.Stats = actorStats;
+		
+		WriteCharacterStats();
 	}
 
 	/// <summary>
@@ -110,17 +117,11 @@ public partial class CharacterStatSetttings : Control
 	}
 
 	/// <summary>
-	/// Writes the character stat names to a JSON file.
+	/// Writes the character stats to the game services.
 	/// </summary>
-	/// <param name="statNames">An array of string containing the character stat names.</param>
-	private void WriteCharacterStatNames(Array<string> statNames)
+	private void WriteCharacterStats()
 	{
-		string json = JsonSerializer.Serialize(statNames);
-
-		var file = new Godot.ConfigFile();
-		file.Load(FilePath);
-		file.SetValue(ConfigSection, CharacterStats, json);
-		file.Save(FilePath);
+		GameServices.Instance.Stats.SaveCharacterStatCollection(StatsCollection);
 	}
 
 	/// <summary>

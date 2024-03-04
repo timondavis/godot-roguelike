@@ -7,5 +7,5 @@ namespace Roguelike.Actor.Stats;
 
 public partial class ActorStatCollection : Node
 {
-	public Array<ActorStat> Stats;
+	public Array<ActorStat> Stats = new Array<ActorStat>();
 }
