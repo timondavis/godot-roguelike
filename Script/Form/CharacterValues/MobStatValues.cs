@@ -13,6 +13,7 @@ public partial class MobStatValues : CharacterStatValues
 	public void InitializeMobForm(string mobName)
 	{
 		_mobName = mobName;
-		PopulateStatValues(_mobName);	
+		StatValues = GameServices.Instance.Stats.LoadMobStats(_mobName);
+		PopulateStatValues(StatValues);	
 	}
 } 

@@ -1,13 +1,6 @@
 using Godot;
-using System;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.Diagnostics.SymbolStore;
-using System.IO;
 using System.Text.Json;
-using Godot.Collections;
 using Roguelike.Script.Actor.Stats;
-using FileAccess = Godot.FileAccess;
 
 namespace Roguelike.Script.Game.Service.Configuration;
 
@@ -15,9 +8,11 @@ public class StatsConfigurationService
 {
 	private const string ConfigFilePath = "user://game-config.cfg";
 	private const string Section_StatLists = "StatLists";
+	private const string Section_PlayerStatValues = "PlayerStatValues";
 	private const string Section_MobStatValues = "MobStatValues";
 	private const string Key_CharacterStatList = "CharacterStatList";
 	private const string Key_ItemStatList = "ItemStatList";
+	private const string Key_PlayerStatValues = "PlayerStatValues";
 
 	private static StatsConfigurationService _instance;
 
@@ -78,11 +73,41 @@ public class StatsConfigurationService
 		file.Save(ConfigFilePath);	
 	}
 
+	public void SavePlayerStatValues(ActorStatValues values)
+	{
+		var file = new ConfigFile();
+		file.Load(ConfigFilePath);
+		file.SetValue(Section_PlayerStatValues, Key_PlayerStatValues, JsonSerializer.Serialize(values));
+		file.Save(ConfigFilePath);	
+	}
+	
 	public ActorStatValues LoadMobStats(string mobName)
 	{
 		var file = new ConfigFile();
 		file.Load(ConfigFilePath);
 		var json = file.GetValue(Section_MobStatValues, mobName, "").ToString();
-		return JsonSerializer.Deserialize<ActorStatValues>(json);
+		if (json.Trim() != "")
+		{
+			return JsonSerializer.Deserialize<ActorStatValues>(json);
+		}
+		else
+		{
+			return new ActorStatValues();
+		}
+	}
+
+	public ActorStatValues LoadPlayerStats()
+	{
+		var file = new ConfigFile();
+		file.Load(ConfigFilePath);
+		var json = file.GetValue(Section_PlayerStatValues, Key_PlayerStatValues, "").ToString();
+		if (json.Trim() != "")
+		{
+			return JsonSerializer.Deserialize<ActorStatValues>(json);
+		}
+		else
+		{
+			return new ActorStatValues();
+		}
 	}
 }

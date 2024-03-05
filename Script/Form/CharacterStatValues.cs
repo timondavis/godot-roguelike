@@ -43,11 +43,10 @@ public abstract partial class CharacterStatValues : Node
 
 	public abstract void on_save_button_pressed();
 		
-	protected void PopulateStatValues(string mobName)
+	protected void PopulateStatValues(ActorStatValues statValues)
 	{
-		_mobName = mobName;
 		Stats = GameServices.Instance.Stats.CharacterStatCollection;
-		StatValues = GameServices.Instance.Stats.LoadMobStats(_mobName);
+		StatValues = statValues;
 		
 		foreach (ActorStat stat in Stats.Stats)
 		{

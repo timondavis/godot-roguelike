@@ -8,4 +8,7 @@ public partial class Character : Actor
 {
 	[Export]
 	public int Initiative { get; set; }
+	
+	public ActorStatValues TemplateStats;
+	public ActorStatValues CurrentStats;
 }
