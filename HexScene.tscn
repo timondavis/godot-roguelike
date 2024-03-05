@@ -1,11 +1,11 @@
 [gd_scene load_steps=8 format=3 uid="uid://byqsq6wqyphy2"]
 
-[ext_resource type="Script" path="res://Map/ProceduralMapBuilder.cs" id="1_evt65"]
-[ext_resource type="TileSet" uid="uid://dce6wu1d4oq8i" path="res://Map/TileSet/hexDungeon.tres" id="2_6acjw"]
-[ext_resource type="Script" path="res://Map/Generator/Rooms/BinarySpacePartitionGenerator.cs" id="3_dpawf"]
-[ext_resource type="Script" path="res://Map/Generator/CellularAutomataMapGenerator.cs" id="4_84pp0"]
-[ext_resource type="Script" path="res://Map/Model/Shapes/Rectangle.cs" id="5_kcksq"]
-[ext_resource type="Script" path="res://Actor/Actor.cs" id="5_wl6ud"]
+[ext_resource type="Script" path="res://Script/Map/ProceduralMapBuilder.cs" id="1_evt65"]
+[ext_resource type="TileSet" uid="uid://dce6wu1d4oq8i" path="res://Script/Map/TileSet/hexDungeon.tres" id="2_6acjw"]
+[ext_resource type="Script" path="res://Script/Map/Generator/Rooms/BinarySpacePartitionGenerator.cs" id="3_dpawf"]
+[ext_resource type="Script" path="res://Script/Map/Generator/CellularAutomataMapGenerator.cs" id="4_84pp0"]
+[ext_resource type="Script" path="res://Script/Map/Model/Shapes/Rectangle.cs" id="5_kcksq"]
+[ext_resource type="Script" path="res://Script/Actor/Actor.cs" id="5_wl6ud"]
 [ext_resource type="Texture2D" uid="uid://bx0i52v1fkkde" path="res://Asset/Character/monster.png" id="6_ppway"]
 
 [node name="HexScene" type="Node2D"]
@@ -24,19 +24,17 @@ GeneratedMapHeight = 200
 MapGeneratorSequence = [NodePath("BSP Generator"), NodePath("Automata Generator")]
 TileAssociationsPath = "res://Asset/TileTypeAssociation/hex-tile-type-associations.json"
 
-[node name="BSP Generator" type="Node" parent="TileMap/MapBuilder" node_paths=PackedStringArray("SelectedAreas")]
+[node name="BSP Generator" type="Node" parent="TileMap/MapBuilder"]
 script = ExtResource("3_dpawf")
 DivisionDepth = 3
 MinConnectionsPerRoom = 2
 MaxConnectionsPerRoom = 3
 CycleEmissionDelay = 0.1
-SelectedAreas = []
 
-[node name="Automata Generator" type="Node" parent="TileMap/MapBuilder" node_paths=PackedStringArray("SelectedAreas")]
+[node name="Automata Generator" type="Node" parent="TileMap/MapBuilder"]
 script = ExtResource("4_84pp0")
 LifeCycles = 30
 CycleEmissionDelay = 0.3
-SelectedAreas = [NodePath("Shape1"), NodePath("Shape2")]
 
 [node name="Shape1" type="Node" parent="TileMap/MapBuilder/Automata Generator"]
 script = ExtResource("5_kcksq")

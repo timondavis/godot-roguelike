@@ -1,15 +1,12 @@
-[gd_scene load_steps=2 format=3 uid="uid://2npwp14j536v"]
+[gd_scene format=3 uid="uid://wi4de7s7aw5i"]
 
-[ext_resource type="Script" path="res://Script/Form/CharacterStatSettings.cs" id="1_eewag"]
-
-[node name="CharacterStatForm" type="Control"]
+[node name="MobStatValuesForm" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_eewag")
 
 [node name="FormLayout" type="VBoxContainer" parent="."]
 layout_mode = 1
@@ -32,7 +29,7 @@ layout_mode = 0
 offset_right = 40.0
 offset_bottom = 23.0
 theme_override_font_sizes/font_size = 45
-text = "Character Stats"
+text = "Game Configuration"
 
 [node name="FieldContainer" type="ScrollContainer" parent="FormLayout"]
 custom_minimum_size = Vector2(2.08165e-12, 400)
@@ -50,21 +47,14 @@ layout_direction = 3
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="HBoxContainer" type="HBoxContainer" parent="FormLayout/Buttons"]
+[node name="ButtonContainer" type="HBoxContainer" parent="FormLayout/Buttons"]
 layout_mode = 1
 offset_right = 240.0
 offset_bottom = 50.0
 
-[node name="SaveButton" type="Button" parent="FormLayout/Buttons/HBoxContainer"]
+[node name="SaveButton" type="Button" parent="FormLayout/Buttons/ButtonContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 30
 text = "Save"
 
-[node name="AddRowButton" type="Button" parent="FormLayout/Buttons/HBoxContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "+ Add Row
-"
-
-[connection signal="pressed" from="FormLayout/Buttons/HBoxContainer/SaveButton" to="." method="_on_save_button_pressed"]
-[connection signal="pressed" from="FormLayout/Buttons/HBoxContainer/AddRowButton" to="." method="_on_add_row_button_pressed"]
+[connection signal="pressed" from="FormLayout/Buttons/ButtonContainer/SaveButton" to="." method="on_save_button_pressed"]

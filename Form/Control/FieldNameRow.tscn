@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://cdh5n3673aydx"]
 
-[ext_resource type="Script" path="res://Form/Script/FieldNameRow.cs" id="1_8f65n"]
+[ext_resource type="Script" path="res://Script/Form/FieldNameRow.cs" id="1_8f65n"]
 [ext_resource type="Theme" uid="uid://b2pvhle4c1v4n" path="res://Form/Theme/FormTheme.tres" id="1_j0b34"]
 
 [node name="FieldNameRow" type="VBoxContainer"]

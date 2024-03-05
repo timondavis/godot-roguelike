@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://cmtpxktxu3mdo"]
 
-[ext_resource type="Script" path="res://Form/Script/CharacterValues/MobStatValues.cs" id="1_mq55a"]
+[ext_resource type="Script" path="res://Script/Form/CharacterValues/MobStatValues.cs" id="1_mq55a"]
 
 [node name="MobStatValuesForm" type="Control"]
 layout_mode = 3
