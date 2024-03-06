@@ -1,0 +1,22 @@
+[gd_scene load_steps=5 format=3 uid="uid://ebj5ju21fce1"]
+
+[ext_resource type="Script" path="res://Script/Actor/Character/Player.cs" id="1_3qicv"]
+[ext_resource type="Texture2D" uid="uid://bx0i52v1fkkde" path="res://Asset/Character/monster.png" id="2_1pu1e"]
+[ext_resource type="PackedScene" uid="uid://bg5jq5ycfhqir" path="res://Form/PlayerStatValuesForm.tscn" id="2_4fpbe"]
+[ext_resource type="Script" path="res://Script/Game/PlayerController.cs" id="3_125cw"]
+
+[node name="Player" type="Node2D" node_paths=PackedStringArray("Controller", "Form")]
+script = ExtResource("1_3qicv")
+Controller = NodePath("Controller")
+Form = NodePath("PlayerStatValuesForm")
+DetailedView = ExtResource("2_1pu1e")
+WorldView = ExtResource("2_1pu1e")
+ActorName = "Slime"
+
+[node name="PlayerStatValuesForm" parent="." instance=ExtResource("2_4fpbe")]
+custom_minimum_size = Vector2(1, 1)
+offset_right = 1159.0
+offset_bottom = 656.0
+
+[node name="Controller" type="Node" parent="."]
+script = ExtResource("3_125cw")

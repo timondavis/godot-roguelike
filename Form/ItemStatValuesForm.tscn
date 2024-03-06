@@ -1,6 +1,6 @@
-[gd_scene load_steps=2 format=3 uid="uid://cmtpxktxu3mdo"]
+[gd_scene load_steps=2 format=3 uid="uid://dgff18sba5sqs"]
 
-[ext_resource type="Script" path="res://Script/Form/ItemValues/ItemStatValuesForm.cs" id="1_t8ui5"]
+[ext_resource type="Script" path="res://Script/Form/ItemValues/ItemStatValuesForm.cs" id="1_3gkf3"]
 
 [node name="ItemStatValuesForm" type="Control"]
 layout_mode = 3
@@ -9,7 +9,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_t8ui5")
+script = ExtResource("1_3gkf3")
 
 [node name="FormLayout" type="VBoxContainer" parent="."]
 layout_mode = 1

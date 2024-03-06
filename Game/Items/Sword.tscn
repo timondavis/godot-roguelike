@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://t32ndqfu5v85"]
+
+[ext_resource type="Script" path="res://Script/Actor/Character/Item.cs" id="1_gnxkd"]
+[ext_resource type="PackedScene" uid="uid://dgff18sba5sqs" path="res://Form/ItemStatValuesForm.tscn" id="2_jrqef"]
+
+[node name="Item" type="Node2D" node_paths=PackedStringArray("Form")]
+script = ExtResource("1_gnxkd")
+Form = NodePath("ItemStatValuesForm")
+ActorName = "Sword"
+
+[node name="ItemStatValuesForm" parent="." instance=ExtResource("2_jrqef")]
+custom_minimum_size = Vector2(1, 1)
+offset_left = -4.0
+offset_top = 1.0
+offset_right = 1157.0
+offset_bottom = 649.0

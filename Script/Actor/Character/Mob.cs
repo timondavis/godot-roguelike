@@ -7,7 +7,7 @@ namespace Roguelike.Script.Actor.Character;
 
 public partial class Mob : Character
 {
-	[Export] public MobStatValues Form;
+	[Export] public MobStatValuesForm Form;
 	
 	[Export] 
 	public MobStrategy Strategy { get; set; }

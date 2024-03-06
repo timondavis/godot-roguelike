@@ -1,14 +1,22 @@
-[gd_scene load_steps=4 format=3 uid="uid://b2b2es456pewa"]
+[gd_scene load_steps=5 format=3 uid="uid://d4nf4up64b4s3"]
 
-[ext_resource type="Script" path="res://Script/Actor/Character/Mob.cs" id="1_7156f"]
-[ext_resource type="Script" path="res://Script/Game/MobStrategy.cs" id="3_eilww"]
-[ext_resource type="PackedScene" uid="uid://cmtpxktxu3mdo" path="res://Form/MobStatValuesForm.tscn" id="4_ss558"]
+[ext_resource type="Script" path="res://Script/Actor/Character/Mob.cs" id="1_4w37l"]
+[ext_resource type="Texture2D" uid="uid://bx0i52v1fkkde" path="res://Asset/Character/monster.png" id="2_gg4s5"]
+[ext_resource type="PackedScene" uid="uid://cmtpxktxu3mdo" path="res://Form/MobStatValuesForm.tscn" id="3_lbor0"]
+[ext_resource type="Script" path="res://Script/Game/MobStrategy.cs" id="4_au1gs"]
 
-[node name="Mob" type="Node2D"]
-script = ExtResource("1_7156f")
+[node name="Mob" type="Node2D" node_paths=PackedStringArray("Form", "Strategy")]
+script = ExtResource("1_4w37l")
+Form = NodePath("MobStatValuesForm")
+Strategy = NodePath("Strategy")
+DetailedView = ExtResource("2_gg4s5")
+WorldView = ExtResource("2_gg4s5")
+ActorName = "Slime"
 
-[node name="MobStrategy" type="Node" parent="."]
-script = ExtResource("3_eilww")
+[node name="MobStatValuesForm" parent="." instance=ExtResource("3_lbor0")]
+custom_minimum_size = Vector2(1, 1)
+offset_right = 1163.0
+offset_bottom = 646.0
 
-[node name="MobStatValuesForm" parent="." instance=ExtResource("4_ss558")]
-visible = false
+[node name="Strategy" type="Node" parent="."]
+script = ExtResource("4_au1gs")

@@ -54,4 +54,14 @@ public class JsonService
         }
         return collection;
     }
+
+    public string StringifyActorStatValues(ActorStatValues values)
+    {
+        return JsonSerializer.Serialize(values);
+    }
+
+    public ActorStatValues ParseActorStatValues(string json)
+    {
+        return JsonSerializer.Deserialize<ActorStatValues>(json);
+    }
 }

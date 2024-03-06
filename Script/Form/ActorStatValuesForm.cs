@@ -1,26 +1,17 @@
 using Godot;
 using Roguelike.Script.Actor.Stats;
-using Roguelike.Script.Game.Service;
 
 namespace Roguelike.Script.Form;
 
-public abstract partial class CharacterStatValues : Node
+public abstract partial class ActorStatValuesForm : Node
 {
-	private const string FilePath = "user://game-config.cfg";
 	private const string FormRowScenePath = "res://Form/Control/StatValueRow.tscn";
 	private const string FormRowContainerPath = "FormLayout/FieldContainer/Content/Rows";
 	private const string FormButtonPath = "FormLayout/Buttons/ButtonContainer/SaveButton";
-	private const string ConfigSection = "GameConfig";
-	private const string CharacterStats = "CharacterStat";
-	protected const string MobStatDefs = "MobStatDefs";
-	protected const string PlayerStatDefs = "PlayerStatDefs";
-	protected const string MobStatValuesPrefix = "MobStatValues_";
-	protected const string PlayerStatValues = "PlayerStatvalues";
 	protected const string LineEditChangedEvent = "text_changed";
 
 	protected ActorStatCollection Stats = new ActorStatCollection();
 	protected ActorStatValues StatValues = new ActorStatValues();
-	private string _mobName = "";
 	
 	private Button SaveButton
 	{
@@ -48,10 +39,12 @@ public abstract partial class CharacterStatValues : Node
 	}
 
 	public abstract void SaveStatValues();
+
+	public abstract ActorStatCollection GetStatCollection();
 		
 	protected void PopulateStatValues(ActorStatValues statValues)
 	{
-		Stats = GameServices.Instance.Stats.CharacterStatCollection;
+		Stats = GetStatCollection();
 		StatValues = statValues;
 		
 		foreach (ActorStat stat in Stats.Stats)

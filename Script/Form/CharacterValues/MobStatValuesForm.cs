@@ -2,7 +2,7 @@ using Roguelike.Script.Game.Service;
 
 namespace Roguelike.Script.Form.CharacterValues;
 
-public partial class MobStatValues : CharacterStatValues
+public partial class MobStatValuesForm : CharacterStatValuesForm
 {
 	private string _mobName;
 	

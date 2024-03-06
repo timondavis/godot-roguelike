@@ -10,7 +10,7 @@ public partial class Player : Character
    [Export] 
    public PlayerController Controller { get; set;}
    
-   [Export] public PlayerStatValues Form;
+   [Export] public PlayerStatValuesForm Form;
 
    public override void _Ready()
    {
