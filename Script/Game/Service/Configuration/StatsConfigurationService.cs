@@ -154,6 +154,7 @@ public class StatsConfigurationService
 		file.Load(ConfigFilePath);
 		file.SetValue(section, key, 
 			JsonService.Instance.StringifyActorStatValues(values));
+		file.Save(ConfigFilePath);
 	}
 
 	/// <summary>

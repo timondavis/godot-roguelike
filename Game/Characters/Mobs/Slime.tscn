@@ -1,7 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://d4nf4up64b4s3"]
+[gd_scene load_steps=5 format=3 uid="uid://dg73rcn53sa60"]
 
 [ext_resource type="Script" path="res://Script/Actor/Character/Mob.cs" id="1_4w37l"]
-[ext_resource type="Texture2D" uid="uid://bx0i52v1fkkde" path="res://Asset/Character/monster.png" id="2_gg4s5"]
+[ext_resource type="Texture2D" uid="uid://bx0i52v1fkkde" path="res://Asset/Character/monster.png" id="2_ioetn"]
 [ext_resource type="PackedScene" uid="uid://cmtpxktxu3mdo" path="res://Form/MobStatValuesForm.tscn" id="3_lbor0"]
 [ext_resource type="Script" path="res://Script/Game/MobStrategy.cs" id="4_au1gs"]
 
@@ -9,14 +9,14 @@
 script = ExtResource("1_4w37l")
 Form = NodePath("MobStatValuesForm")
 Strategy = NodePath("Strategy")
-DetailedView = ExtResource("2_gg4s5")
-WorldView = ExtResource("2_gg4s5")
+DetailedView = ExtResource("2_ioetn")
+WorldView = ExtResource("2_ioetn")
 ActorName = "Slime"
-
-[node name="MobStatValuesForm" parent="." instance=ExtResource("3_lbor0")]
-custom_minimum_size = Vector2(1, 1)
-offset_right = 1163.0
-offset_bottom = 646.0
 
 [node name="Strategy" type="Node" parent="."]
 script = ExtResource("4_au1gs")
+
+[node name="MobStatValuesForm" parent="." instance=ExtResource("3_lbor0")]
+custom_minimum_size = Vector2(1, 1)
+offset_right = 1153.0
+offset_bottom = 648.0

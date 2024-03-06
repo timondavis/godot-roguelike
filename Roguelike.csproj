@@ -6,7 +6,14 @@
     <EnableDynamicLoading>true</EnableDynamicLoading>
   </PropertyGroup>
   <ItemGroup>
-    <Folder Include="Game\" />
     <Folder Include="Script\Form\Config\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Game\**" />
+    <Compile Remove="Form\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Remove="Game\**" />
+    <EmbeddedResource Remove="Form\**" />
   </ItemGroup>
 </Project>

@@ -21,7 +21,7 @@ ActiveTileMap = NodePath("..")
 SourceTileSet = ExtResource("2_6acjw")
 GeneratedMapWidth = 200
 GeneratedMapHeight = 200
-MapGeneratorSequence = []
+MapGeneratorSequence = [NodePath("BSP Generator"), NodePath("Automata Generator")]
 TileAssociationsPath = "res://Asset/TileTypeAssociation/hex-tile-type-associations.json"
 
 [node name="BSP Generator" type="Node" parent="TileMap/MapBuilder" node_paths=PackedStringArray("SelectedAreas")]
@@ -36,7 +36,7 @@ SelectedAreas = []
 script = ExtResource("4_84pp0")
 LifeCycles = 30
 CycleEmissionDelay = 0.3
-SelectedAreas = []
+SelectedAreas = [NodePath("Shape1"), NodePath("Shape2")]
 
 [node name="Shape1" type="Node" parent="TileMap/MapBuilder/Automata Generator"]
 script = ExtResource("5_kcksq")

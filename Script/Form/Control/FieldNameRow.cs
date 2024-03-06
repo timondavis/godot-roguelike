@@ -1,5 +1,6 @@
 using Godot;
-using System;
+
+namespace Roguelike.Script.Form.Control;
 
 public partial class FieldNameRow : VBoxContainer
 {

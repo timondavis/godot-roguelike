@@ -4,7 +4,7 @@ using Roguelike.Script.Actor.Stats;
 
 namespace Roguelike.Script.Form.Config.Game;
 
-public abstract partial class StatConfig : Control
+public abstract partial class StatConfig : Godot.Control
 {
 	private const string FormRowScenePath = "res://Form/Control/FieldNameRow.tscn";
 	private const string FormRowContainerPath = "FormLayout/FieldContainer/Content/Rows";

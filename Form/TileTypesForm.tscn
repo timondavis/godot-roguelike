@@ -1,15 +1,15 @@
-[gd_scene load_steps=2 format=3 uid="uid://cmtpxktxu3mdo"]
+[gd_scene load_steps=2 format=3 uid="uid://c2keq5carvp1i"]
 
-[ext_resource type="Script" path="res://Script/Form/CharacterValues/MobStatValuesForm.cs" id="1_h7vtq"]
+[ext_resource type="Script" path="res://Script/Form/ItemValues/ItemStatValuesForm.cs" id="1_pb8pp"]
 
-[node name="MobStatValuesForm" type="Control"]
+[node name="ItemStatValuesForm" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_h7vtq")
+script = ExtResource("1_pb8pp")
 
 [node name="FormLayout" type="VBoxContainer" parent="."]
 layout_mode = 1
@@ -32,7 +32,7 @@ layout_mode = 0
 offset_right = 40.0
 offset_bottom = 23.0
 theme_override_font_sizes/font_size = 45
-text = "Mob Stats"
+text = "Item Stat Values"
 
 [node name="FieldContainer" type="ScrollContainer" parent="FormLayout"]
 custom_minimum_size = Vector2(2.08165e-12, 400)
