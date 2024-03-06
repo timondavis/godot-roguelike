@@ -6,7 +6,7 @@ public partial class MobStatValues : CharacterStatValues
 {
 	private string _mobName;
 	
-	public override void on_save_button_pressed() {
+	public override void SaveStatValues() {
 		GameServices.Instance.Stats.SaveMobStatValues(_mobName, StatValues);
 	}
 	

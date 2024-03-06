@@ -41,7 +41,13 @@ public abstract partial class CharacterStatValues : Node
 		ValidateState();
 	}
 
-	public abstract void on_save_button_pressed();
+	public void on_save_button_pressed()
+	{
+		SaveStatValues();
+		SaveButton.Disabled = true;
+	}
+
+	public abstract void SaveStatValues();
 		
 	protected void PopulateStatValues(ActorStatValues statValues)
 	{

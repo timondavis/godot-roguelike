@@ -5,7 +5,7 @@ namespace Roguelike.Script.Form.CharacterValues;
 public partial class PlayerStatValues : CharacterStatValues
 {
 
-	public override void on_save_button_pressed()
+	public override void SaveStatValues()
 	{
 		GameServices.Instance.Stats.SavePlayerStatValues(StatValues);
 	}
