@@ -1,28 +1,78 @@
 using Godot;
 using Godot.Collections;
 using Roguelike.Script.Actor.Stats;
-using Roguelike.Script.Game.Service;
 
-namespace Roguelike.Script.Form;
+namespace Roguelike.Script.Form.Config.Game;
 
-public partial class CharacterStatSettings : Control
+public abstract partial class StatConfig : Control
 {
 	private const string FormRowScenePath = "res://Form/Control/FieldNameRow.tscn";
 	private const string FormRowContainerPath = "FormLayout/FieldContainer/Content/Rows";
+	private const string SaveButtonPath = "FormLayout/Buttons/HBoxContainer/SaveButton";
+	protected const string LineEditChangedEvent = "text_changed";
 
-	private ActorStatCollection StatsCollection = new ActorStatCollection();
+	protected ActorStatCollection StatsCollection = new ActorStatCollection();
+
+	protected abstract ActorStatCollection GetStatsCollection();
+
+	/// <summary>
+	/// Writes the character stats to the game services.
+	/// </summary>
+	protected abstract void WriteStatsCollection();
+
+	/// <summary>
+	/// Retrieves the save button node.
+	/// </summary>
+	/// <returns>The save button node.</returns>
+	private Button SaveButton
+	{
+		get
+		{
+			return GetNode<Button>(SaveButtonPath);
+		}
+	}
+
+	/// <summary>
+	/// Retrieves the VBoxContainer that holds the form rows.
+	/// </summary>
+	/// <returns>
+	/// The VBoxContainer that represents the container for the form rows.
+	/// </returns>
+	private VBoxContainer FormRowsContainer
+	{
+		get
+		{
+			VBoxContainer rowsContainer = GetNode<VBoxContainer>(FormRowContainerPath);
+			return rowsContainer;	
+		}	
+	}
+
+	/// <summary>
+	/// Retrieves the rows from the form.
+	/// </summary>
+	/// <returns>An array of nodes representing the rows in the form.</returns>
+	private Array<Node> FormRows
+	{
+		get
+		{
+			VBoxContainer rowsContainer = GetNode<VBoxContainer>("FormLayout/FieldContainer/Content/Rows");
+			return rowsContainer.GetChildren();	
+		}
+	}
 	
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		StatsCollection = GameServices.Instance.Stats.CharacterStatCollection;
+		StatsCollection = GetStatsCollection();
 		foreach (ActorStat stat in StatsCollection.Stats)
 		{
 			var newRow = GenerateFormRowInstance();
-			var rowsContainer = GetFormRowsContainer();
-			rowsContainer.AddChild(newRow);
+			FormRowsContainer.AddChild(newRow);
+			AttachListenerForRow(newRow);
 			SetValueForRow(newRow, stat.StatName);
 		}
+
+		SaveButton.Disabled = true;
 	}
 
 	/// <summary>
@@ -31,8 +81,8 @@ public partial class CharacterStatSettings : Control
 	public void _on_add_row_button_pressed()
 	{
 		var newRow = GenerateFormRowInstance();
-		var rowsContainer = GetFormRowsContainer();
-		rowsContainer.AddChild(newRow);
+		FormRowsContainer.AddChild(newRow);
+		AttachListenerForRow(newRow);
 	}
 
 	/// <summary>
@@ -52,7 +102,13 @@ public partial class CharacterStatSettings : Control
 
 		StatsCollection.Stats = actorStats;
 		
-		WriteCharacterStats();
+		WriteStatsCollection();
+		SaveButton.Disabled = true;
+	}
+
+	public void on_line_edit_changed(string newText)
+	{
+		SaveButton.Disabled = false;
 	}
 
 	/// <summary>
@@ -97,31 +153,13 @@ public partial class CharacterStatSettings : Control
 	{
 		Array<string> fieldValues = new Array<string>();
 			
-		foreach (Node rowNode in GetRowsFromForm())
+		foreach (Node rowNode in FormRows)
 		{
 			VBoxContainer row = rowNode as VBoxContainer;
 			fieldValues.Add(GetValueFromRow(row));
 		}
 
 		return fieldValues;
-	}
-
-	/// <summary>
-	/// Retrieves the rows from the form.
-	/// </summary>
-	/// <returns>An array of nodes representing the rows in the form.</returns>
-	private Array<Node> GetRowsFromForm()
-	{
-		VBoxContainer rowsContainer = GetNode<VBoxContainer>("FormLayout/FieldContainer/Content/Rows");
-		return rowsContainer.GetChildren();
-	}
-
-	/// <summary>
-	/// Writes the character stats to the game services.
-	/// </summary>
-	private void WriteCharacterStats()
-	{
-		GameServices.Instance.Stats.SaveCharacterStatCollection(StatsCollection);
 	}
 
 	/// <summary>
@@ -136,14 +174,12 @@ public partial class CharacterStatSettings : Control
 	}
 
 	/// <summary>
-	/// Retrieves the VBoxContainer that holds the form rows.
+	/// Attaches a listener to the specified row in a VBoxContainer.
 	/// </summary>
-	/// <returns>
-	/// The VBoxContainer that represents the container for the form rows.
-	/// </returns>
-	private VBoxContainer GetFormRowsContainer()
+	/// <param name="row">The VBoxContainer row to attach the listener to.</param>
+	private void AttachListenerForRow(VBoxContainer row)
 	{
-		VBoxContainer rowsContainer = GetNode<VBoxContainer>(FormRowContainerPath);
-		return rowsContainer;
+		LineEdit lineEdit = row.GetChild(1).GetChild(2).GetChild<LineEdit>(0);
+		lineEdit.Connect(LineEditChangedEvent, new Callable( this, nameof (on_line_edit_changed)));
 	}
 }

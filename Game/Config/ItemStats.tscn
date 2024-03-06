@@ -1,15 +1,15 @@
-[gd_scene load_steps=2 format=3 uid="uid://2npwp14j536v"]
+[gd_scene load_steps=2 format=3 uid="uid://4qyglbcil2v0"]
 
-[ext_resource type="Script" path="res://Script/Form/CharacterStatSettings.cs" id="1_eewag"]
+[ext_resource type="Script" path="res://Script/Form/Config/Game/Stat/ItemStatConfig.cs" id="1_qg474"]
 
-[node name="CharacterStatForm" type="Control"]
+[node name="ItemStatConfig" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_eewag")
+script = ExtResource("1_qg474")
 
 [node name="FormLayout" type="VBoxContainer" parent="."]
 layout_mode = 1
@@ -32,7 +32,7 @@ layout_mode = 0
 offset_right = 40.0
 offset_bottom = 23.0
 theme_override_font_sizes/font_size = 45
-text = "Character Stats"
+text = "Item Stats"
 
 [node name="FieldContainer" type="ScrollContainer" parent="FormLayout"]
 custom_minimum_size = Vector2(2.08165e-12, 400)
